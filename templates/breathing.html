@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Breathing Exercise — MindEase</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">🧘 Mind<span>Ease</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/mood">Mood Check</a>
+    <a href="/resources">Resources</a>
+    <a href="/community">Community</a>
+    <a href="/about">About</a>
+    <a href="/chat" class="nav-cta">💬 AI Chat</a>
+  </div>
+  <button class="burger-btn" id="burger-btn" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <button class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+    <span class="theme-toggle-knob">🌙</span>
+  </button>
+</nav>
+
+<div id="mobile-nav" class="mobile-nav">
+  <a href="/">Home</a>
+  <a href="/mood">Mood Check</a>
+  <a href="/resources">Resources</a>
+  <a href="/community">Community</a>
+  <a href="/breathing" class="active">Breathing</a>
+  <a href="/about">About</a>
+  <a href="/chat" class="nav-cta">💬 AI Chat</a>
+</div>
+<div id="nav-overlay" class="nav-overlay" onclick="closeNav()"></div>
+
+<div class="page-wrap">
+  <div class="breathing-wrap">
+
+    <p class="section-label fade-up">🌬️ Breathing Exercise</p>
+    <h1 class="section-title fade-up delay-1" style="margin-bottom:0.5rem;">Breathe with me</h1>
+    <p class="section-sub fade-up delay-2" style="margin-bottom:1.5rem;">
+      Even 2 minutes of guided breathing reduces cortisol and calms anxiety.
+    </p>
+
+    <!-- Technique selector -->
+    <div class="breath-technique-selector fade-up delay-2">
+      <button class="breath-technique-btn active" onclick="selectTechnique(this,'4-4-4-4')">📦 Box (4-4-4-4)</button>
+      <button class="breath-technique-btn" onclick="selectTechnique(this,'4-7-8')">🌙 4-7-8</button>
+      <button class="breath-technique-btn" onclick="selectTechnique(this,'5-5')">⚡ Quick (5-5)</button>
+    </div>
+
+    <!-- Animated circle -->
+    <div class="breath-circle-outer fade-up delay-3">
+      <div class="breath-ring"></div>
+      <div class="breath-ring"></div>
+      <div class="breath-ring"></div>
+      <div class="breath-circle" id="breath-circle">
+        <div class="breath-phase-text" id="breath-phase">Ready</div>
+        <div class="breath-count" id="breath-count">—</div>
+      </div>
+    </div>
+
+    <!-- Instruction text -->
+    <p class="breath-instruction" id="breath-instruction">Press Start when you're ready</p>
+    <p class="breath-sub" id="breath-sub">Find a comfortable position and relax your shoulders</p>
+
+    <!-- Controls -->
+    <div class="breath-controls">
+      <button class="btn-primary" id="start-btn" onclick="startBreathing()">▶ Start</button>
+      <button class="btn-secondary" id="stop-btn" onclick="stopBreathing()" style="display:none;">⏹ Stop</button>
+    </div>
+
+    <p class="breath-session-count" id="session-count"></p>
+
+    <!-- Technique info -->
+    <div class="card fade-up" style="max-width:500px;width:100%;margin-top:2.5rem;text-align:left;">
+      <p id="technique-info" style="color:var(--text2);font-size:0.9rem;line-height:1.7;">
+        <strong style="color:var(--text);">Box Breathing (4-4-4-4)</strong> — Used by Navy SEALs and athletes to calm the nervous system under pressure.
+        Inhale for 4 counts, hold for 4, exhale for 4, hold for 4. Repeat for 4–6 cycles.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- Emergency Helpline Button -->
+<button class="emergency-fab" onclick="openEmergency()">
+  <div class="fab-dot"></div>
+  Help
+</button>
+
+<!-- Emergency Modal -->
+<div class="emergency-modal-bg" id="emergency-modal" onclick="closeEmergency()">
+  <div class="emergency-modal" onclick="event.stopPropagation()">
+    <button onclick="closeEmergency()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;">✕</button>
+    <div style="font-size:2rem;margin-bottom:0.75rem;">🆘</div>
+    <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:0.5rem;color:var(--text);">Need immediate help?</h2>
+    <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1.25rem;line-height:1.6;">You are not alone. Trained counsellors are available to talk — free and confidential.</p>
+    <div class="helpline-item">
+      <div>
+        <div style="font-weight:600;color:var(--text);font-size:0.9rem;">iCall</div>
+        <div style="font-size:0.78rem;color:var(--text3);">Mon–Sat, 8am–10pm</div>
+      </div>
+      <a href="tel:9152987821" class="helpline-number">9152987821</a>
+    </div>
+    <div class="helpline-item">
+      <div>
+        <div style="font-weight:600;color:var(--text);font-size:0.9rem;">Vandrevala Foundation</div>
+        <div style="font-size:0.78rem;color:var(--text3);">24/7 · Free</div>
+      </div>
+      <a href="tel:18602662345" class="helpline-number">1860-266-2345</a>
+    </div>
+    <div class="helpline-item">
+      <div>
+        <div style="font-weight:600;color:var(--text);font-size:0.9rem;">NIMHANS</div>
+        <div style="font-size:0.78rem;color:var(--text3);">National helpline</div>
+      </div>
+      <a href="tel:080-46110007" class="helpline-number">080-46110007</a>
+    </div>
+    <p style="font-size:0.78rem;color:var(--text3);margin-top:1rem;text-align:center;">Or talk to your college counsellor — asking for help is strength 💙</p>
+  </div>
+</div>
+
+<footer><p>MindEase © 2025–26</p></footer>
+
+<button class="scroll-top-btn" id="scroll-top-btn" aria-label="Scroll to top">↑</button>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/particles.js"></script>
+<script>
+const TECHNIQUES = {
+  '4-4-4-4': { inhale:4, hold1:4, exhale:4, hold2:4, name:'Box Breathing (4-4-4-4)', info:'<strong style="color:var(--text)">Box Breathing (4-4-4-4)</strong> — Used by Navy SEALs and athletes to calm the nervous system under pressure. Inhale for 4, hold for 4, exhale for 4, hold for 4.' },
+  '4-7-8':   { inhale:4, hold1:7, exhale:8, hold2:0, name:'4-7-8 Breathing',         info:'<strong style="color:var(--text)">4-7-8 Technique</strong> — Developed by Dr. Andrew Weil for anxiety and sleep. Inhale 4 counts, hold 7, exhale slowly for 8. The extended exhale activates the parasympathetic nervous system.' },
+  '5-5':     { inhale:5, hold1:0, exhale:5, hold2:0, name:'Quick Calm (5-5)',          info:'<strong style="color:var(--text)">Quick Calm (5-5)</strong> — Simplest and fastest technique. Inhale for 5, exhale for 5. Perfect for immediate stress relief during exams or presentations.' }
+};
+
+let currentTech = '4-4-4-4';
+let sessionCount = 0;
+let timer = null;
+let running = false;
+
+function selectTechnique(btn, key) {
+  if (running) return;
+  document.querySelectorAll('.breath-technique-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTech = key;
+  document.getElementById('technique-info').innerHTML = TECHNIQUES[key].info;
+  resetUI();
+}
+
+function resetUI() {
+  document.getElementById('breath-phase').textContent = 'Ready';
+  document.getElementById('breath-count').textContent = '—';
+  document.getElementById('breath-instruction').textContent = 'Press Start when you\'re ready';
+  document.getElementById('breath-sub').textContent = 'Find a comfortable position and relax your shoulders';
+  const c = document.getElementById('breath-circle');
+  c.className = 'breath-circle';
+  c.style.background = 'radial-gradient(circle at 35% 35%, rgba(99,179,193,0.4), rgba(99,179,193,0.1))';
+}
+
+function phaseColors(phase) {
+  if (phase === 'inhale') return 'radial-gradient(circle at 35% 35%, rgba(99,179,193,0.5), rgba(99,179,193,0.15))';
+  if (phase === 'exhale') return 'radial-gradient(circle at 35% 35%, rgba(142,210,192,0.4), rgba(142,210,192,0.1))';
+  return 'radial-gradient(circle at 35% 35%, rgba(167,139,250,0.4), rgba(167,139,250,0.1))';
+}
+
+async function runCycle() {
+  const t = TECHNIQUES[currentTech];
+  const circle = document.getElementById('breath-circle');
+  const phases = [
+    { key:'inhale', label:'INHALE',  instruction:'Breathe in slowly…',        sub:'Expand your belly, not your chest',      dur:t.inhale },
+    ...(t.hold1 ? [{ key:'hold',   label:'HOLD',    instruction:'Hold your breath',              sub:'Stay relaxed, don\'t tense up',           dur:t.hold1 }] : []),
+    { key:'exhale', label:'EXHALE',  instruction:'Breathe out completely…',   sub:'Slow, steady exhale through your mouth', dur:t.exhale },
+    ...(t.hold2 ? [{ key:'hold2',  label:'HOLD',    instruction:'Hold before next breath',       sub:'Keep your body relaxed',                  dur:t.hold2 }] : []),
+  ];
+
+  for (const phase of phases) {
+    if (!running) return;
+    circle.className = 'breath-circle ' + phase.key;
+    circle.style.background = phaseColors(phase.key);
+    document.getElementById('breath-phase').textContent = phase.label;
+    document.getElementById('breath-instruction').textContent = phase.instruction;
+    document.getElementById('breath-sub').textContent = phase.sub;
+    for (let i = phase.dur; i >= 1; i--) {
+      if (!running) return;
+      document.getElementById('breath-count').textContent = i;
+      await sleep(1000);
+    }
+  }
+  sessionCount++;
+  document.getElementById('session-count').textContent = `✓ ${sessionCount} cycle${sessionCount>1?'s':''} completed`;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function startBreathing() {
+  if (running) return;
+  running = true;
+  document.getElementById('start-btn').style.display = 'none';
+  document.getElementById('stop-btn').style.display = 'inline-flex';
+  sessionCount = 0;
+  document.getElementById('session-count').textContent = '';
+  while (running) { await runCycle(); }
+}
+
+function stopBreathing() {
+  running = false;
+  document.getElementById('start-btn').style.display = 'inline-flex';
+  document.getElementById('stop-btn').style.display = 'none';
+  resetUI();
+}
+</script>
+</body>
+</html>

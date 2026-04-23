@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resources — MindEase</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+
+<nav>
+  <a href="/" class="nav-logo">🧘 Mind<span>Ease</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/mood">Mood Check</a>
+    <a href="/resources" class="active">Resources</a>
+    <a href="/community">Community</a>
+    <a href="/about">About</a>
+    <a href="/breathing">🌬️ Breathing</a>
+    <a href="/chat" class="nav-cta">💬 AI Chat</a>
+  </div>
+  <button class="burger-btn" id="burger-btn" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <button class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+    <span class="theme-toggle-knob">🌙</span>
+  </button>
+</nav>
+<div id="mobile-nav" class="mobile-nav">
+  <a href="/" >Home</a>
+  <a href="/mood" >Mood Check</a>
+  <a href="/resources" class="active">Resources</a>
+  <a href="/community" >Community</a>
+  <a href="/breathing" >🌬️ Breathing</a>
+  <a href="/about" >About</a>
+  <a href="/chat" class="nav-cta">💬 AI Chat</a>
+</div>
+<div id="nav-overlay" class="nav-overlay" onclick="closeNav()"></div>
+
+<div class="page-wrap">
+  <div class="section">
+
+    <p class="section-label fade-up">📚 Self-Help Library</p>
+    <h1 class="section-title fade-up delay-1">Resources for student wellness</h1>
+    <p class="section-sub fade-up delay-2" style="margin-bottom: 3rem;">
+      Practical guides, exercises, and tips curated specifically for college students.
+    </p>
+
+    <!-- Filter Tabs -->
+    <div class="tag-group fade-up delay-3" id="filter-tags" style="margin-bottom: 2rem;">
+      <div class="tag active" onclick="filterResources('all', this)">All</div>
+      <div class="tag" onclick="filterResources('stress', this)">Stress</div>
+      <div class="tag" onclick="filterResources('sleep', this)">Sleep</div>
+      <div class="tag" onclick="filterResources('anxiety', this)">Anxiety</div>
+      <div class="tag" onclick="filterResources('focus', this)">Focus</div>
+      <div class="tag" onclick="filterResources('social', this)">Social</div>
+      <div class="tag" onclick="filterResources('exams', this)">Exams</div>
+    </div>
+
+    <!-- Resources Grid -->
+    <div class="resources-grid" id="resources-grid">
+
+      <div class="resource-card" data-cat="stress anxiety" onclick="openResource('5-4-3-2-1 Grounding Technique', 'When anxiety hits during exams, try this: Name 5 things you can see, 4 things you can touch, 3 things you can hear, 2 things you can smell, 1 thing you can taste. This simple technique brings your mind back to the present and stops anxious thoughts.')">
+        <div class="resource-tag">Anxiety · 2 min read</div>
+        <h3>5-4-3-2-1 Grounding Technique</h3>
+        <p>A quick sensory exercise to stop anxiety spirals during exams and stressful moments.</p>
+      </div>
+
+      <div class="resource-card" data-cat="stress" onclick="openResource('Box Breathing for Exam Stress', 'Box breathing is used by athletes and soldiers to manage pressure. Try it before your exam: Breathe IN for 4 counts → Hold for 4 counts → Breathe OUT for 4 counts → Hold for 4 counts. Repeat 4 times. This activates your parasympathetic nervous system and reduces cortisol levels.')">
+        <div class="resource-tag">Stress · 3 min exercise</div>
+        <h3>Box Breathing for Exam Stress</h3>
+        <p>Used by athletes and soldiers — this breathing technique calms your nervous system in minutes.</p>
+      </div>
+
+      <div class="resource-card" data-cat="sleep" onclick="openResource('Sleep Hygiene for Students', 'Poor sleep worsens anxiety and hurts memory consolidation. Tips: Keep a consistent sleep schedule (even on weekends). Avoid screens 1 hour before bed. Keep your room cool and dark. Avoid caffeine after 3pm. Try the 4-7-8 breathing method to fall asleep faster: Inhale for 4 counts, hold for 7, exhale for 8.')">
+        <div class="resource-tag">Sleep · 4 min read</div>
+        <h3>Sleep Hygiene for Students</h3>
+        <p>Why pulling all-nighters actually destroys your performance — and how to fix your sleep cycle.</p>
+      </div>
+
+      <div class="resource-card" data-cat="focus" onclick="openResource('Pomodoro for Students', 'The Pomodoro Technique helps you study smarter, not longer: Study for 25 minutes with full focus (no phone!) → Take a 5-minute break → Repeat 4 times → Take a longer 20-minute break. During breaks: stretch, walk, or do breathing exercises. Avoid social media during short breaks — it makes returning to study harder.')">
+        <div class="resource-tag">Focus · 5 min read</div>
+        <h3>The Pomodoro Method for Students</h3>
+        <p>How to study for hours without feeling drained — with built-in mental recovery breaks.</p>
+      </div>
+
+      <div class="resource-card" data-cat="anxiety stress" onclick="openResource('Journaling for Stress Relief', 'Writing down your thoughts reduces the mental load. Try: Every evening, write 3 things that stressed you today and 3 things that went well. This practice rewires your brain to notice positives. It also externalizes worries, making them feel smaller and more manageable. No need to write perfectly — just dump your thoughts.')">
+        <div class="resource-tag">Stress · 3 min</div>
+        <h3>Journaling for Stress Relief</h3>
+        <p>Writing 3 sentences a day can significantly reduce anxiety levels over time.</p>
+      </div>
+
+      <div class="resource-card" data-cat="social" onclick="openResource('Dealing with Social Comparison', 'Social comparison during placements is toxic for mental health. Remember: Everyone shares their wins, not their struggles. Your classmate who got a 40 LPA offer also has problems you don\'t know about. Tips: Limit LinkedIn scrolling during placement season. Focus on YOUR progress, not others\'. Set personal benchmarks, not social ones.')">
+        <div class="resource-tag">Social · 4 min read</div>
+        <h3>Dealing with Placement Comparison</h3>
+        <p>Why comparing yourself to classmates during placement season hurts you — and how to stop.</p>
+      </div>
+
+      <div class="resource-card" data-cat="anxiety" onclick="openResource('Progressive Muscle Relaxation', 'This technique releases physical tension stored by stress: Start from your toes — tense each muscle group for 5 seconds, then release for 30 seconds. Move upward: feet → calves → thighs → abdomen → hands → arms → shoulders → face. Total time: ~15 minutes. Best done before sleep. It dramatically improves sleep quality.')">
+        <div class="resource-tag">Anxiety · 15 min exercise</div>
+        <h3>Progressive Muscle Relaxation</h3>
+        <p>Release physical tension from stress by systematically relaxing each muscle group.</p>
+      </div>
+
+      <div class="resource-card" data-cat="focus stress" onclick="openResource('Single-Tasking vs Multitasking', 'Multitasking is a myth — your brain switches rapidly between tasks, losing 40% efficiency each switch. For students: Close all tabs except what you\'re studying. Put your phone in another room. Use website blockers (Cold Turkey, Freedom). Study one subject for a full session. Your brain needs 20 minutes to enter deep focus after a distraction.')">
+        <div class="resource-tag">Focus · 3 min read</div>
+        <h3>Why Multitasking is Destroying Your Study Sessions</h3>
+        <p>Science says multitasking costs 40% of your productivity. Here's how to fix it.</p>
+      </div>
+
+      <div class="resource-card" data-cat="social stress" onclick="openResource('Setting Boundaries with Hostel Life', 'Hostel life makes it hard to study, sleep, and have personal time. Tips: Communicate study hours to roommates. Use noise-cancelling earphones as a social signal. It\'s okay to say no to late-night hangouts before exams. Your need for alone time is valid — introversion is not antisocial.')">
+        <div class="resource-tag">Social · 3 min</div>
+        <h3>Setting Boundaries in Hostel Life</h3>
+        <p>How to protect your study time and mental space without losing friendships.</p>
+      </div>
+
+
+      <div class="resource-card" data-cat="anxiety stress" onclick="openResource('Dealing with Exam Failure', 'Failing an exam does not define your future. Many successful engineers failed exams. Steps: 1) Allow 24 hours to feel bad then move on. 2) Analyze what went wrong without self-blame. 3) Make a specific improvement plan. 4) Talk to a mentor. Your worth is not your CGPA.')">
+        <div class="resource-tag">Stress · 4 min read</div>
+        <h3>Dealing with Exam Failure</h3>
+        <p>How to bounce back after a bad result without spiraling into self-blame.</p>
+      </div>
+
+      <div class="resource-card" data-cat="focus sleep" onclick="openResource('Digital Detox for Students', 'Your phone is the biggest thief of focus and sleep. Tips: No phone 1 hour before bed. Blue light suppresses melatonin. Delete social apps from home screen. Use app timers. Replace scroll time with a 5-minute walk. Every notification is a mini stress spike — turn off non-essential ones.')">
+        <div class="resource-tag">Focus · 3 min read</div>
+        <h3>Digital Detox for Students</h3>
+        <p>How your phone is secretly increasing your anxiety — and how to take control.</p>
+      </div>
+
+      <div class="resource-card" data-cat="social anxiety" onclick="openResource('Talking to Parents About Stress', 'Many Indian students struggle to talk to parents about mental pressure. Tips: Choose a calm moment. Start with facts not emotions — say I am struggling with my workload. Be specific about what you need. Remember: parents want your wellbeing, not just your grades.')">
+        <div class="resource-tag">Social · 5 min read</div>
+        <h3>Talking to Parents About Stress</h3>
+        <p>How to open up to family about academic pressure without making it worse.</p>
+      </div>
+
+      <div class="resource-card" data-cat="stress focus" onclick="openResource('The 2-Minute Rule for Overwhelm', 'When everything feels too much: If a task takes less than 2 minutes, do it NOW. For bigger tasks, just commit to starting for 2 minutes. Most of the time you will keep going. The hardest part is always starting. Breaking tasks into 2-minute micro-steps makes them manageable.')">
+        <div class="resource-tag">Focus · 2 min read</div>
+        <h3>The 2-Minute Rule for Overwhelm</h3>
+        <p>The simplest technique to beat procrastination when you feel completely stuck.</p>
+      </div>
+
+      <div class="resource-card" data-cat="sleep anxiety" onclick="openResource('4-7-8 Breathing to Fall Asleep', 'If racing thoughts keep you awake before exams: Inhale through nose for 4 counts. Hold breath for 7 counts. Exhale completely through mouth for 8 counts. Repeat 4 times. This activates the parasympathetic nervous system and lowers heart rate within minutes.')">
+        <div class="resource-tag">Sleep · 3 min exercise</div>
+        <h3>4-7-8 Breathing to Fall Asleep</h3>
+        <p>Can not sleep before exams? This breathing technique knocks most people out in minutes.</p>
+      </div>
+
+      <div class="resource-card" data-cat="social stress" onclick="openResource('Building a Support System in College', 'Loneliness in college is more common than you think. Tips: Identify 2-3 people you can be honest with. You do not need a big friend group — depth matters more than width. Join one club aligned with your interests. Check in on your friends too — giving support builds connection.')">
+        <div class="resource-tag">Social · 4 min read</div>
+        <h3>Building a Support System in College</h3>
+        <p>Why having even 2 trusted friends reduces stress more than any study technique.</p>
+      </div>
+
+      <div class="resource-card" data-cat="focus stress" onclick="openResource('Managing Internship + College', 'Balancing internship and academics is one of the hardest things in engineering. Tips: Block calendar time for both. Communicate with your manager about exam weeks. Use commute time for revision audio. Say no to extra tasks during exam season. Sleep is non-negotiable.')">
+        <div class="resource-tag">Focus · 5 min read</div>
+        <h3>Managing Internship + College</h3>
+        <p>Practical strategies for students trying to balance work, studies, and sanity.</p>
+      </div>
+
+      <div class="resource-card" data-cat="stress anxiety" onclick="openResource('Imposter Syndrome in Engineering', 'Feeling like you do not belong or are not smart enough is called imposter syndrome. It affects 70% of students. Remember: everyone is struggling, they just do not show it. Your admission was not a mistake. Focus on growth, not comparison. Talk to seniors — they felt exactly the same.')">
+        <div class="resource-tag">Anxiety · 4 min read</div>
+        <h3>Beating Imposter Syndrome</h3>
+        <p>Why 70% of students secretly feel like they do not belong — and what to do about it.</p>
+      </div>
+
+      <div class="resource-card" data-cat="focus" onclick="openResource('Active Recall vs Passive Reading', 'Passive reading (just reading notes) is the least effective study method. Active recall means testing yourself: Close the book, write everything you remember. Use flashcards. Explain the topic out loud to yourself. This forces your brain to retrieve information, making it stick 3x better.')">
+        <div class="resource-tag">Focus · 4 min read</div>
+        <h3>Study Smarter: Active Recall</h3>
+        <p>The science-backed technique that makes studying 3x more effective than re-reading notes.</p>
+      </div>
+
+      <div class="resource-card" data-cat="stress social" onclick="openResource('Dealing with FOMO During Exams', 'Fear of missing out when your friends are having fun while you study is real. Tips: Set specific study hours with planned breaks. Remind yourself this is temporary. Use social time as a reward after study sessions. Your future self will thank you — your friends will understand.')">
+        <div class="resource-tag">Social · 3 min read</div>
+        <h3>Dealing with FOMO During Exams</h3>
+        <p>How to focus when everyone around you seems to be having fun without you.</p>
+      </div>
+
+      <div class="resource-card" data-cat="sleep focus" onclick="openResource('Power Napping for Students', 'A 20-minute nap between 1-3 PM can restore alertness as much as a full night of extra sleep. Set an alarm for exactly 20 minutes — longer naps cause sleep inertia and leave you groggy. Nap in a dark, quiet place. This is used by NASA pilots and Olympic athletes. It works.')">
+        <div class="resource-tag">Sleep · 2 min read</div>
+        <h3>Power Napping for Students</h3>
+        <p>How a 20-minute nap can restore your focus better than another cup of chai.</p>
+      </div>
+
+      <div class="resource-card" data-cat="anxiety stress" onclick="openResource('Worry Time Technique', 'Instead of worrying all day, schedule a specific 15-minute worry time each day. When a worry comes up outside this time, write it down and save it for later. During your worry time, actively think through solutions. This trains your brain to contain anxiety rather than letting it spread throughout the day.')">
+        <div class="resource-tag">Anxiety · 3 min read</div>
+        <h3>The Worry Time Technique</h3>
+        <p>Schedule your anxiety to a 15-minute window — and free the rest of your day from it.</p>
+      </div>
+
+      <div class="resource-card" data-cat="stress focus" onclick="openResource('Cold Water Face Technique', 'When panic or overwhelm hits suddenly: Splash cold water on your face or hold ice. This activates the dive reflex which slows your heart rate within 30 seconds. Take 3 deep breaths. This is an emergency reset button your body has built in. Use it before important presentations or exams.')">
+        <div class="resource-tag">Stress · 1 min</div>
+        <h3>Emergency Stress Reset</h3>
+        <p>A 30-second physical technique to stop a panic spiral before an exam or presentation.</p>
+      </div>
+
+      <div class="resource-card" data-cat="social anxiety" onclick="openResource('Asking for Help Without Shame', 'In Indian college culture, asking for help is often seen as weakness. But research shows students who ask questions learn 40% faster. Reframe it: asking questions shows you care enough about learning to risk looking foolish. Email professors. Ask seniors. Use study groups. No one knows everything.')">
+        <div class="resource-tag">Social · 3 min read</div>
+        <h3>Asking for Help Without Shame</h3>
+        <p>Why asking questions is actually a sign of intelligence, not weakness.</p>
+      </div>
+
+      <div class="resource-card" data-cat="stress sleep" onclick="openResource('Evening Wind-Down Routine', 'Your brain needs a transition between study mode and sleep mode. Try: Stop studying 45 minutes before bed. Do light stretching for 5 minutes. Write 3 things that went well today. Read something non-academic for 15 minutes. Keep your phone outside the bedroom. This improves sleep quality by 40%.')">
+        <div class="resource-tag">Sleep · 4 min read</div>
+        <h3>Evening Wind-Down Routine</h3>
+        <p>A simple 45-minute routine that dramatically improves your sleep quality and next-day focus.</p>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Resource Modal -->
+<div id="resource-modal" style="
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(8,14,26,0.9); backdrop-filter: blur(10px);
+  align-items: center; justify-content: center; padding: 2rem;
+">
+  <div class="card" style="max-width: 560px; width: 100%; position: relative; max-height: 80vh; overflow-y: auto;">
+    <button onclick="closeModal()" style="
+      position: absolute; top: 1rem; right: 1rem;
+      background: var(--card2); border: none; color: var(--text2);
+      width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+      font-size: 1rem; display: flex; align-items: center; justify-content: center;
+    ">✕</button>
+    <h2 id="modal-title" class="section-title" style="font-size: 1.3rem; margin-bottom: 1rem; padding-right: 2rem;"></h2>
+    <p id="modal-content" style="color: var(--text2); line-height: 1.8; font-size: 0.95rem;"></p>
+    <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+      <p style="font-size: 0.85rem; color: var(--text3); margin-bottom: 1rem;">Want to discuss this further?</p>
+      <a href="/chat" class="btn-primary" style="display:inline-flex;">💬 Discuss with AI</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>MindEase © 2025–26</p>
+</footer>
+
+<button class="scroll-top-btn" id="scroll-top-btn" aria-label="Scroll to top">↑</button>
+<script src="/static/js/main.js"></script>
+<script>
+  function filterResources(cat, el) {
+    document.querySelectorAll('#filter-tags .tag').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.resource-card').forEach(card => {
+      if (cat === 'all' || card.dataset.cat.includes(cat)) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  function openResource(title, content) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-content').textContent = content;
+    const modal = document.getElementById('resource-modal');
+    modal.style.display = 'flex';
+    setTimeout(() => modal.style.opacity = 1, 10);
+  }
+
+  function closeModal() {
+    document.getElementById('resource-modal').style.display = 'none';
+  }
+
+  document.getElementById('resource-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+</script>
+<script src="/static/js/particles.js"></script>
+
+<!-- Emergency Helpline -->
+<button class="emergency-fab" onclick="openEmergency()">
+  <div class="fab-dot"></div> Help
+</button>
+<div class="emergency-modal-bg" id="emergency-modal" onclick="closeEmergency()">
+  <div class="emergency-modal" onclick="event.stopPropagation()">
+    <button onclick="closeEmergency()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;">✕</button>
+    <div style="font-size:2rem;margin-bottom:0.75rem;">🆘</div>
+    <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:0.5rem;color:var(--text);">Need immediate help?</h2>
+    <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1.25rem;line-height:1.6;">You are not alone. Trained counsellors are available — free and confidential.</p>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">iCall</div><div style="font-size:0.78rem;color:var(--text3);">Mon–Sat, 8am–10pm</div></div><a href="tel:9152987821" class="helpline-number">9152987821</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">Vandrevala Foundation</div><div style="font-size:0.78rem;color:var(--text3);">24/7 · Free</div></div><a href="tel:18602662345" class="helpline-number">1860-266-2345</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">NIMHANS</div><div style="font-size:0.78rem;color:var(--text3);">National helpline</div></div><a href="tel:080-46110007" class="helpline-number">080-46110007</a></div>
+    <p style="font-size:0.78rem;color:var(--text3);margin-top:1rem;text-align:center;">Or talk to your college counsellor — asking for help is strength 💙</p>
+  </div>
+</div>
+</body>
+</html>

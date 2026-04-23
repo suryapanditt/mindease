@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Community — MindEase</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">🧘 Mind<span>Ease</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/mood">Mood Check</a>
+    <a href="/resources">Resources</a>
+    <a href="/community" class="active">Community</a>
+    <a href="/about">About</a>
+    <a href="/breathing">🌬️ Breathing</a>
+    <a href="/chat" class="nav-cta">💬 AI Chat</a>
+  </div>
+  <button class="burger-btn" id="burger-btn" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <button class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+    <span class="theme-toggle-knob">🌙</span>
+  </button>
+</nav>
+<div id="mobile-nav" class="mobile-nav">
+  <a href="/" >Home</a>
+  <a href="/mood" >Mood Check</a>
+  <a href="/resources" >Resources</a>
+  <a href="/community" class="active">Community</a>
+  <a href="/breathing" >🌬️ Breathing</a>
+  <a href="/about" >About</a>
+  <a href="/chat" class="nav-cta">💬 AI Chat</a>
+</div>
+<div id="nav-overlay" class="nav-overlay" onclick="closeNav()"></div>
+
+<div class="page-wrap">
+  <div class="section" style="max-width: 780px;">
+
+    <p class="section-label fade-up">🤝 Anonymous Community</p>
+    <h1 class="section-title fade-up delay-1">You are not alone</h1>
+    <p class="section-sub fade-up delay-2" style="margin-bottom: 2.5rem;">
+      Share what you're going through. Support others. No names, no judgment — just students helping students.
+    </p>
+
+    <!-- Post Form -->
+    <div class="card fade-up delay-3" style="margin-bottom: 2rem;">
+      <h3 style="font-size:1rem; margin-bottom:1rem; color:var(--text);">Share something anonymously</h3>
+
+      <div class="form-group">
+        <select class="form-select" id="post-category">
+          <option value="stress">😰 Exam Stress</option>
+          <option value="placement">💼 Placement Anxiety</option>
+          <option value="overwhelmed">😤 Feeling Overwhelmed</option>
+          <option value="sleep">😴 Sleep Issues</option>
+          <option value="motivation">🔥 Need Motivation</option>
+          <option value="win">🎉 Small Win — Sharing Joy</option>
+          <option value="general">💭 General</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <textarea class="form-textarea" id="post-content" placeholder="What's on your mind? Be as open as you want — this is completely anonymous..." rows="4"></textarea>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+        <p style="font-size:0.78rem; color:var(--text3);">🔒 100% anonymous · No login required</p>
+        <button class="btn-primary" id="post-btn" onclick="submitPost()">Post Anonymously</button>
+      </div>
+
+      <div id="post-success" style="display:none; margin-top:1rem; padding:0.75rem; background:rgba(120,201,160,0.1); border:1px solid rgba(120,201,160,0.3); border-radius:10px; color:var(--success); font-size:0.88rem; text-align:center;">
+        ✅ Your post has been shared! Someone out there needed to hear this.
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="tag-group fade-up" style="margin-bottom:1.5rem;" id="filter-tags">
+      <div class="tag active" onclick="filterPosts('all', this)">All</div>
+      <div class="tag" onclick="filterPosts('stress', this)">Exam Stress</div>
+      <div class="tag" onclick="filterPosts('placement', this)">Placement</div>
+      <div class="tag" onclick="filterPosts('overwhelmed', this)">Overwhelmed</div>
+      <div class="tag" onclick="filterPosts('win', this)">🎉 Wins</div>
+      <div class="tag" onclick="filterPosts('motivation', this)">Motivation</div>
+    </div>
+
+    <!-- Posts Feed -->
+    <div id="posts-feed"></div>
+
+    <!-- Loading -->
+    <div id="posts-loading" style="text-align:center; padding:3rem; color:var(--text3);">
+      <div style="font-size:2rem; margin-bottom:0.5rem;">⏳</div>
+      <p>Loading community posts...</p>
+    </div>
+
+    <!-- Empty state -->
+    <div id="posts-empty" style="display:none; text-align:center; padding:3rem; color:var(--text3);">
+      <div style="font-size:3rem; margin-bottom:1rem;">💭</div>
+      <p style="margin-bottom:0.5rem;">No posts yet in this category.</p>
+      <p style="font-size:0.85rem;">Be the first to share something!</p>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>MindEase © 2025–26</p>
+</footer>
+
+<button class="scroll-top-btn" id="scroll-top-btn" aria-label="Scroll to top">↑</button>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/community.js"></script>
+<script src="/static/js/particles.js"></script>
+
+<!-- Emergency Helpline -->
+<button class="emergency-fab" onclick="openEmergency()">
+  <div class="fab-dot"></div> Help
+</button>
+<div class="emergency-modal-bg" id="emergency-modal" onclick="closeEmergency()">
+  <div class="emergency-modal" onclick="event.stopPropagation()">
+    <button onclick="closeEmergency()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;">✕</button>
+    <div style="font-size:2rem;margin-bottom:0.75rem;">🆘</div>
+    <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:0.5rem;color:var(--text);">Need immediate help?</h2>
+    <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1.25rem;line-height:1.6;">You are not alone. Trained counsellors are available — free and confidential.</p>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">iCall</div><div style="font-size:0.78rem;color:var(--text3);">Mon–Sat, 8am–10pm</div></div><a href="tel:9152987821" class="helpline-number">9152987821</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">Vandrevala Foundation</div><div style="font-size:0.78rem;color:var(--text3);">24/7 · Free</div></div><a href="tel:18602662345" class="helpline-number">1860-266-2345</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">NIMHANS</div><div style="font-size:0.78rem;color:var(--text3);">National helpline</div></div><a href="tel:080-46110007" class="helpline-number">080-46110007</a></div>
+    <p style="font-size:0.78rem;color:var(--text3);margin-top:1rem;text-align:center;">Or talk to your college counsellor — asking for help is strength 💙</p>
+  </div>
+</div>
+</body>
+</html>

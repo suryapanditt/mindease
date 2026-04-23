@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mood Check — MindEase</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+
+<nav>
+  <a href="/" class="nav-logo">🧘 Mind<span>Ease</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/mood" class="active">Mood Check</a>
+    <a href="/resources">Resources</a>
+    <a href="/community">Community</a>
+    <a href="/about">About</a>
+    <a href="/breathing">🌬️ Breathing</a>
+    <a href="/chat" class="nav-cta">💬 AI Chat</a>
+  </div>
+  <button class="burger-btn" id="burger-btn" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <button class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+    <span class="theme-toggle-knob">🌙</span>
+  </button>
+</nav>
+<div id="mobile-nav" class="mobile-nav">
+  <a href="/" >Home</a>
+  <a href="/mood" class="active">Mood Check</a>
+  <a href="/resources" >Resources</a>
+  <a href="/community" >Community</a>
+  <a href="/breathing" >🌬️ Breathing</a>
+  <a href="/about" >About</a>
+  <a href="/chat" class="nav-cta">💬 AI Chat</a>
+</div>
+<div id="nav-overlay" class="nav-overlay" onclick="closeNav()"></div>
+
+<div class="page-wrap">
+  <div class="section" style="max-width: 680px;">
+
+    <p class="section-label fade-up">📊 Stress Assessment</p>
+    <h1 class="section-title fade-up delay-1">How are you feeling today?</h1>
+    <p class="section-sub fade-up delay-2" style="margin-bottom: 2.5rem;">
+      Answer a few simple questions. Our ML model will predict your stress level and suggest personalized tips.
+      <strong style="color: var(--text);">Everything is anonymous.</strong>
+    </p>
+
+    <div class="card fade-up delay-3">
+      <form id="mood-form">
+
+        <!-- Sleep -->
+        <div class="form-group">
+          <label class="form-label">😴 How many hours did you sleep last night?</label>
+          <div class="slider-wrap">
+            <input type="range" id="sleep" min="0" max="12" value="6" step="0.5" oninput="updateSlider('sleep', 'sleep-val', 'hrs')">
+            <div class="slider-labels">
+              <span>0 hrs</span>
+              <span id="sleep-val" style="color: var(--accent); font-weight: 600;">6 hrs</span>
+              <span>12 hrs</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Study hours -->
+        <div class="form-group">
+          <label class="form-label">📚 How many hours did you study today?</label>
+          <div class="slider-wrap">
+            <input type="range" id="study" min="0" max="16" value="4" step="0.5" oninput="updateSlider('study', 'study-val', 'hrs')">
+            <div class="slider-labels">
+              <span>0 hrs</span>
+              <span id="study-val" style="color: var(--accent); font-weight: 600;">4 hrs</span>
+              <span>16 hrs</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mood -->
+        <div class="form-group">
+          <label class="form-label">😊 How is your mood right now? (1 = Very bad, 10 = Very good)</label>
+          <div class="slider-wrap">
+            <input type="range" id="mood" min="1" max="10" value="5" step="1" oninput="updateSlider('mood', 'mood-val', '/10')">
+            <div class="slider-labels">
+              <span>😞 Very Bad</span>
+              <span id="mood-val" style="color: var(--accent); font-weight: 600;">5/10</span>
+              <span>😄 Very Good</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Anxiety -->
+        <div class="form-group">
+          <label class="form-label">😰 How anxious are you feeling? (1 = Not at all, 10 = Extremely)</label>
+          <div class="slider-wrap">
+            <input type="range" id="anxiety" min="1" max="10" value="5" step="1" oninput="updateSlider('anxiety', 'anxiety-val', '/10')">
+            <div class="slider-labels">
+              <span>😌 Calm</span>
+              <span id="anxiety-val" style="color: var(--accent); font-weight: 600;">5/10</span>
+              <span>😱 Very Anxious</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Interaction -->
+        <div class="form-group">
+          <label class="form-label">👥 How much did you interact socially today?</label>
+          <div class="slider-wrap">
+            <input type="range" id="social" min="1" max="10" value="5" step="1" oninput="updateSlider('social', 'social-val', '/10')">
+            <div class="slider-labels">
+              <span>🚪 Isolated</span>
+              <span id="social-val" style="color: var(--accent); font-weight: 600;">5/10</span>
+              <span>🎉 Very Social</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Situation -->
+        <div class="form-group">
+          <label class="form-label">📌 What's going on in your college life right now?</label>
+          <div class="tag-group" id="situation-tags">
+            <div class="tag" onclick="toggleTag(this)">📝 Exams</div>
+            <div class="tag" onclick="toggleTag(this)">💼 Placements</div>
+            <div class="tag" onclick="toggleTag(this)">📋 Assignments</div>
+            <div class="tag" onclick="toggleTag(this)">🏆 Hackathon</div>
+            <div class="tag" onclick="toggleTag(this)">😔 Personal Issues</div>
+            <div class="tag" onclick="toggleTag(this)">💤 Sleep Debt</div>
+            <div class="tag" onclick="toggleTag(this)">🧑‍💻 Internship Pressure</div>
+            <div class="tag" onclick="toggleTag(this)">😊 All Good</div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-primary" id="predict-btn" style="width: 100%; justify-content: center; margin-top: 0.5rem;">
+          🔍 Predict My Stress Level
+        </button>
+
+      </form>
+
+      <!-- Error Box -->
+      <div id="predict-error" style="display:none;margin-top:1rem;padding:0.85rem 1rem;background:rgba(224,120,120,0.1);border:1px solid rgba(224,120,120,0.3);border-radius:10px;color:var(--danger);font-size:0.88rem;text-align:center;"></div>
+
+      <!-- Model Badge -->
+      <div id="model-badge" style="display:none; margin-top:1rem; text-align:center; font-size:0.82rem; color:var(--accent); padding:0.5rem; background:rgba(99,179,193,0.08); border-radius:10px; border:1px solid var(--border);"></div>
+
+      <!-- Result Box -->
+      <!-- Stress Meter -->
+      <div id="stress-meter" style="display:none; margin:2rem 0; text-align:center;">
+        <p style="font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text3);margin-bottom:1.25rem;">Stress Level Meter</p>
+        <div style="position:relative; width:300px; height:160px; margin:0 auto;">
+          <svg width="300" height="160" viewBox="0 0 300 160">
+            <!-- Background track -->
+            <path d="M 30 145 A 120 120 0 0 1 270 145" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="18" stroke-linecap="round"/>
+            <!-- Green zone -->
+            <path d="M 30 145 A 120 120 0 0 1 102 37" fill="none" stroke="#78c9a0" stroke-width="18" stroke-linecap="round" opacity="0.7"/>
+            <!-- Amber zone -->
+            <path d="M 102 37 A 120 120 0 0 1 198 37" fill="none" stroke="#e0b878" stroke-width="18" stroke-linecap="round" opacity="0.7"/>
+            <!-- Red zone -->
+            <path d="M 198 37 A 120 120 0 0 1 270 145" fill="none" stroke="#e07878" stroke-width="18" stroke-linecap="round" opacity="0.7"/>
+            <!-- Needle -->
+            <g id="stress-needle" style="transform-origin:150px 145px; transform:rotate(-90deg); transition:transform 1.4s cubic-bezier(0.34,1.56,0.64,1);">
+              <line x1="150" y1="145" x2="150" y2="38" stroke="white" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="150" cy="145" r="9" fill="white"/>
+              <circle cx="150" cy="145" r="4" fill="#0d1526"/>
+            </g>
+          </svg>
+          <!-- Labels outside arc -->
+          <div style="position:absolute; bottom:0px; left:-10px; font-size:0.75rem; font-weight:700; color:#78c9a0;">Low</div>
+          <div style="position:absolute; top:0; left:50%; transform:translateX(-50%); font-size:0.75rem; font-weight:700; color:#e0b878;">Mid</div>
+          <div style="position:absolute; bottom:0px; right:-10px; font-size:0.75rem; font-weight:700; color:#e07878;">High</div>
+          <!-- Hidden score for JS use -->
+          <div id="score-num" style="display:none;">--</div>
+        </div>
+      </div>
+
+      <div class="result-box low" id="result-low">
+        <div class="result-emoji">🌿</div>
+        <div class="result-level">Low Stress</div>
+        <p class="result-tips" id="tips-low"></p>
+      </div>
+      <div class="result-box medium" id="result-medium">
+        <div class="result-emoji">⚡</div>
+        <div class="result-level">Moderate Stress</div>
+        <p class="result-tips" id="tips-medium"></p>
+      </div>
+      <div class="result-box high" id="result-high">
+        <div class="result-emoji">🔥</div>
+        <div class="result-level">High Stress</div>
+        <p class="result-tips" id="tips-high"></p>
+      </div>
+
+    
+    <!-- Share Result Button -->
+    <div id="share-result-wrap" style="text-align:center; margin-top: 1rem; display:none;">
+      <button id="share-result-btn" onclick="openShareCard()" class="btn-secondary" style="display:inline-flex; gap:0.5rem; align-items:center;">
+        📤 Share My Result
+      </button>
+    </div>
+
+    <!-- After result — chat CTA -->
+    <div id="chat-cta" style="display:none; margin-top: 1.5rem;">
+      <div class="card" style="text-align:center; border-color: rgba(99,179,193,0.25);">
+        <p style="color: var(--text2); margin-bottom: 1rem; font-size: 0.95rem;">Want to talk about what you're going through?</p>
+        <a href="/chat" class="btn-primary" style="display:inline-flex;">💬 Talk to AI Now</a>
+      </div>
+    </div>
+
+    </div><!-- closes .card.fade-up.delay-3 -->
+
+  </div><!-- closes .section -->
+</div><!-- closes .page-wrap -->
+
+<footer>
+  <p>MindEase © 2025–26</p>
+</footer>
+
+<button class="scroll-top-btn" id="scroll-top-btn" aria-label="Scroll to top">↑</button>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/mood.js"></script>
+<script src="/static/js/particles.js"></script>
+
+<!-- Emergency Helpline -->
+<button class="emergency-fab" onclick="openEmergency()">
+  <div class="fab-dot"></div> Help
+</button>
+<div class="emergency-modal-bg" id="emergency-modal" onclick="closeEmergency()">
+  <div class="emergency-modal" onclick="event.stopPropagation()">
+    <button onclick="closeEmergency()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;">✕</button>
+    <div style="font-size:2rem;margin-bottom:0.75rem;">🆘</div>
+    <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:0.5rem;color:var(--text);">Need immediate help?</h2>
+    <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1.25rem;line-height:1.6;">You are not alone. Trained counsellors are available — free and confidential.</p>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">iCall</div><div style="font-size:0.78rem;color:var(--text3);">Mon–Sat, 8am–10pm</div></div><a href="tel:9152987821" class="helpline-number">9152987821</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">Vandrevala Foundation</div><div style="font-size:0.78rem;color:var(--text3);">24/7 · Free</div></div><a href="tel:18602662345" class="helpline-number">1860-266-2345</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">NIMHANS</div><div style="font-size:0.78rem;color:var(--text3);">National helpline</div></div><a href="tel:080-46110007" class="helpline-number">080-46110007</a></div>
+    <p style="font-size:0.78rem;color:var(--text3);margin-top:1rem;text-align:center;">Or talk to your college counsellor — asking for help is strength 💙</p>
+  </div>
+</div>
+
+<!-- Share Card Modal -->
+<div class="share-modal-bg" id="share-modal">
+  <div class="share-modal" style="max-width:520px;">
+    <button onclick="closeShareCard()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;">✕</button>
+    <p style="font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;">Your Mood Card</p>
+
+    <!-- Tab switcher -->
+    <div style="display:flex;gap:0.5rem;margin-bottom:1rem;background:var(--bg2);padding:4px;border-radius:10px;">
+      <button id="tab-simple" onclick="switchTab('simple')" style="flex:1;padding:0.4rem;border:none;border-radius:7px;font-size:0.8rem;cursor:pointer;background:var(--accent);color:#fff;font-weight:600;">Simple</button>
+      <button id="tab-detailed" onclick="switchTab('detailed')" style="flex:1;padding:0.4rem;border:none;border-radius:7px;font-size:0.8rem;cursor:pointer;background:transparent;color:var(--text2);">With My Inputs</button>
+    </div>
+
+    <!-- Simple Card -->
+    <div id="share-card">
+      <div class="sc-logo">🧘 MindEase</div>
+      <span class="sc-emoji" id="sc-emoji">🌿</span>
+      <div class="sc-label">Today's Stress Level</div>
+      <div class="sc-level" id="sc-level">Low Stress 🌿</div>
+      <div class="sc-tip" id="sc-tip"></div>
+      <div class="sc-footer">mindease.app · <span id="sc-date"></span></div>
+    </div>
+
+    <!-- Detailed Card (with inputs) -->
+    <div id="share-card-detailed" style="display:none; background:linear-gradient(135deg,#0d1526,#111d35); border-radius:16px; padding:1.5rem; text-align:left; border:1px solid rgba(99,179,193,0.2);">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid rgba(255,255,255,0.08);">
+        <span style="font-size:1.1rem;">🧘</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:#e8edf5;">MindEase</span>
+        <span id="sd-emoji" style="margin-left:auto;font-size:1.4rem;">🌿</span>
+      </div>
+      <div style="font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#63b3c1;margin-bottom:0.3rem;">Today's Stress Level</div>
+      <div id="sd-level" style="font-size:1.3rem;font-weight:700;margin-bottom:1rem;color:#78c9a0;">Low Stress 🌿</div>
+      <div style="font-size:0.65rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:0.6rem;">My Inputs Today</div>
+      <div id="sd-inputs" style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;margin-bottom:0.9rem;"></div>
+      <div id="sd-tags" style="display:flex;flex-wrap:wrap;gap:0.35rem;margin-bottom:0.9rem;"></div>
+      <div style="font-size:0.78rem;color:rgba(255,255,255,0.5);font-style:italic;margin-bottom:0.75rem;" id="sd-tip"></div>
+      <div style="font-size:0.65rem;color:rgba(255,255,255,0.25);padding-top:0.6rem;border-top:1px solid rgba(255,255,255,0.06);">mindease.app · <span id="sd-date"></span></div>
+    </div>
+
+    <div style="display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap; margin-top:1rem;">
+      <button id="download-btn" onclick="downloadShareCard()" class="btn-primary" style="font-size:0.88rem; padding:0.65rem 1.4rem;">
+        ⬇️ Download PNG
+      </button>
+      <button onclick="closeShareCard()" class="btn-secondary" style="font-size:0.88rem; padding:0.65rem 1.4rem;">
+        Close
+      </button>
+    </div>
+    <p style="font-size:0.75rem; color:var(--text3); margin-top:0.75rem; text-align:center;">Share with friends or save for yourself!</p>
+  </div>
+</div>
+</body>
+</html>

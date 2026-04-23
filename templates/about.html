@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — MindEase</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">🧘 Mind<span>Ease</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/mood">Mood Check</a>
+    <a href="/resources">Resources</a>
+    <a href="/about" class="active">About</a>
+    <a href="/breathing">🌬️ Breathing</a>
+    <a href="/chat" class="nav-cta">💬 AI Chat</a>
+  </div>
+  <button class="burger-btn" id="burger-btn" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <button class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+    <span class="theme-toggle-knob">🌙</span>
+  </button>
+</nav>
+<div id="mobile-nav" class="mobile-nav">
+  <a href="/" >Home</a>
+  <a href="/mood" >Mood Check</a>
+  <a href="/resources" >Resources</a>
+  <a href="/community" >Community</a>
+  <a href="/breathing" >🌬️ Breathing</a>
+  <a href="/about" class="active">About</a>
+  <a href="/chat" class="nav-cta">💬 AI Chat</a>
+</div>
+<div id="nav-overlay" class="nav-overlay" onclick="closeNav()"></div>
+
+<div class="page-wrap">
+  <div class="section" style="max-width: 900px;">
+
+    <!-- Header -->
+    <p class="section-label fade-up">👥 Our Team</p>
+    <h1 class="section-title fade-up delay-1">The people behind<br/><span class="highlight">MindEase</span></h1>
+    <p class="section-sub fade-up delay-2" style="margin-bottom: 3rem;">
+      5 B.Tech CSE students from GLA University, Mathura — building technology that cares.
+    </p>
+
+    <!-- Team Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 4rem;">
+
+      <div class="feature-card fade-up delay-1" style="text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1rem;">S</div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.25rem;">Suryansh Tripathi</h3>
+        <p style="color:var(--accent);font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;">Roll No. 2415001644</p>
+        <p style="color:var(--text2);font-size:0.85rem;">Machine Learning & Data Analysis</p>
+      </div>
+
+      <div class="feature-card fade-up delay-2" style="text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#8ed2c0);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1rem;">S</div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.25rem;">Skand Singh</h3>
+        <p style="color:var(--accent);font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;">Roll No. 2415001038</p>
+        <p style="color:var(--text2);font-size:0.85rem;">Backend Development & Flask API</p>
+      </div>
+
+      <div class="feature-card fade-up delay-3" style="text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#c9a96e,#e07878);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1rem;">V</div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.25rem;">Vishal</h3>
+        <p style="color:var(--accent);font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;">Roll No. 2415001787</p>
+        <p style="color:var(--text2);font-size:0.85rem;">Frontend Development & UI/UX Design</p>
+      </div>
+
+      <div class="feature-card fade-up delay-1" style="text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#78c9a0,#7dd3fc);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1rem;">Y</div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.25rem;">Yash Sharma</h3>
+        <p style="color:var(--accent);font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;">Roll No. 2415001831</p>
+        <p style="color:var(--text2);font-size:0.85rem;">Database & Deployment</p>
+      </div>
+
+      <div class="feature-card fade-up delay-2" style="text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#f0abfc,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1rem;">N</div>
+        <h3 style="font-size:1.1rem;margin-bottom:0.25rem;">Nimesh Rai</h3>
+        <p style="color:var(--accent);font-size:0.8rem;font-weight:600;margin-bottom:0.5rem;">Roll No. 2415001577</p>
+        <p style="color:var(--text2);font-size:0.85rem;">Research & Documentation</p>
+      </div>
+
+    </div>
+
+    <!-- Supervisor -->
+    <div class="card fade-up" style="text-align:center; margin-bottom: 3rem; border-color: rgba(99,179,193,0.25);">
+      <p style="font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;">Project Supervisor</p>
+      <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1rem;">👩‍🏫</div>
+      <h3 style="font-family:'Syne',sans-serif;font-size:1.3rem;margin-bottom:0.25rem;">Ms. Km Prakriti Chaurasia</h3>
+      <p style="color:var(--text2);font-size:0.9rem;">Department of Computer Engineering & Applications</p>
+      <p style="color:var(--text3);font-size:0.85rem;margin-top:0.25rem;">GLA University, Mathura</p>
+    </div>
+
+    <!-- Project Story -->
+    <div class="card fade-up" style="margin-bottom: 3rem;">
+      <p class="section-label" style="margin-bottom:0.75rem;">💡 Our Story</p>
+      <h2 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:1rem;">Why we built MindEase</h2>
+      <p style="color:var(--text2);line-height:1.8;font-size:0.95rem;margin-bottom:1rem;">
+        During our mid-term examinations, we were juggling hackathons, academics, and internship responsibilities all at once. The pressure felt overwhelming — and there was no one readily available to talk to.
+      </p>
+      <p style="color:var(--text2);line-height:1.8;font-size:0.95rem;margin-bottom:1rem;">
+        We talked to friends in our batch and they said the same thing — mentally tired, but nowhere to go. Most students don't want to discuss mental health openly because of the stigma around it.
+      </p>
+      <p style="color:var(--text2);line-height:1.8;font-size:0.95rem;">
+        That's why we built MindEase — a private, anonymous space where students can check in with their mental health, get AI-powered stress predictions, and access curated resources. No judgment. No login. Just support.
+      </p>
+    </div>
+
+    <!-- Tech Stack -->
+    <div class="card fade-up">
+      <p class="section-label" style="margin-bottom:0.75rem;">🛠️ Tech Stack</p>
+      <h2 style="font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:1.5rem;">Built with</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:0.4rem;">🌐</div>
+          <div style="font-size:0.85rem;font-weight:600;color:var(--text);">HTML/CSS/JS</div>
+          <div style="font-size:0.75rem;color:var(--text3);">Frontend</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:0.4rem;">🐍</div>
+          <div style="font-size:0.85rem;font-weight:600;color:var(--text);">Flask</div>
+          <div style="font-size:0.75rem;color:var(--text3);">Backend</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:0.4rem;">🤖</div>
+          <div style="font-size:0.85rem;font-weight:600;color:var(--text);">Random Forest</div>
+          <div style="font-size:0.75rem;color:var(--text3);">ML Model · 90.5%</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:0.4rem;">🍃</div>
+          <div style="font-size:0.85rem;font-weight:600;color:var(--text);">MongoDB</div>
+          <div style="font-size:0.75rem;color:var(--text3);">Database</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+          <div style="font-size:1.5rem;margin-bottom:0.4rem;">💬</div>
+          <div style="font-size:0.85rem;font-weight:600;color:var(--text);">Groq AI</div>
+          <div style="font-size:0.75rem;color:var(--text3);">AI Chat · Llama 3.1</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>MindEase © 2025–26</p>
+</footer>
+
+<button class="scroll-top-btn" id="scroll-top-btn" aria-label="Scroll to top">↑</button>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/particles.js"></script>
+
+<!-- Emergency Helpline -->
+<button class="emergency-fab" onclick="openEmergency()">
+  <div class="fab-dot"></div> Help
+</button>
+<div class="emergency-modal-bg" id="emergency-modal" onclick="closeEmergency()">
+  <div class="emergency-modal" onclick="event.stopPropagation()">
+    <button onclick="closeEmergency()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;">✕</button>
+    <div style="font-size:2rem;margin-bottom:0.75rem;">🆘</div>
+    <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:0.5rem;color:var(--text);">Need immediate help?</h2>
+    <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1.25rem;line-height:1.6;">You are not alone. Trained counsellors are available — free and confidential.</p>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">iCall</div><div style="font-size:0.78rem;color:var(--text3);">Mon–Sat, 8am–10pm</div></div><a href="tel:9152987821" class="helpline-number">9152987821</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">Vandrevala Foundation</div><div style="font-size:0.78rem;color:var(--text3);">24/7 · Free</div></div><a href="tel:18602662345" class="helpline-number">1860-266-2345</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">NIMHANS</div><div style="font-size:0.78rem;color:var(--text3);">National helpline</div></div><a href="tel:080-46110007" class="helpline-number">080-46110007</a></div>
+    <p style="font-size:0.78rem;color:var(--text3);margin-top:1rem;text-align:center;">Or talk to your college counsellor — asking for help is strength 💙</p>
+  </div>
+</div>
+</body>
+</html>

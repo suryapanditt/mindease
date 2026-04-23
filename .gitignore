@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+*.pkl
+venv/
+.venv/
+ml/kaggle_data.csv
+ml/synthetic_data.csv

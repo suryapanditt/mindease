@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Analytics — MindEase</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.4rem 1.25rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
+    .stat-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:3px;
+      background: var(--card-accent, linear-gradient(90deg, var(--accent), var(--accent2)));
+    }
+    .stat-card .s-label { font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--text3); margin-bottom:0.5rem; }
+    .stat-card .s-val   { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--text); line-height:1; margin-bottom:0.3rem; }
+    .stat-card .s-sub   { font-size:0.78rem; color:var(--text3); }
+    .stat-card .s-icon  { position:absolute; top:1.2rem; right:1.2rem; font-size:1.6rem; opacity:0.35; }
+
+    .charts-row { display:grid; grid-template-columns: 1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
+    .charts-row-3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:1.25rem; margin-bottom:1.25rem; }
+    @media(max-width:900px) { .charts-row, .charts-row-3 { grid-template-columns:1fr; } }
+
+    .chart-card {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:16px; padding:1.5rem;
+    }
+    .chart-title {
+      font-size:0.72rem; font-weight:600; letter-spacing:0.1em;
+      text-transform:uppercase; color:var(--text3); margin-bottom:0.4rem;
+    }
+    .chart-heading {
+      font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700;
+      color:var(--text); margin-bottom:1.25rem;
+    }
+    .chart-wrap { position:relative; }
+
+    .insight-pill {
+      display:inline-flex; align-items:center; gap:0.4rem;
+      font-size:0.78rem; padding:0.3rem 0.8rem;
+      background:rgba(99,179,193,0.1); border:1px solid rgba(99,179,193,0.2);
+      border-radius:100px; color:var(--accent); margin-top:0.75rem;
+    }
+
+    .bar-row { display:flex; align-items:center; gap:0.75rem; margin-bottom:0.6rem; }
+    .bar-label { font-size:0.78rem; color:var(--text2); min-width:120px; }
+    .bar-track { flex:1; height:8px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; }
+    .bar-fill  { height:100%; border-radius:4px; transition:width 1.2s cubic-bezier(0.34,1.56,0.64,1); }
+    .bar-count { font-size:0.72rem; color:var(--text3); min-width:30px; text-align:right; }
+
+    .score-row { display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem; }
+    .score-label { font-size:0.82rem; color:var(--text2); min-width:90px; }
+    .score-track { flex:1; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; }
+    .score-fill  { height:100%; border-radius:3px; transition:width 1.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .score-val   { font-size:0.78rem; font-weight:600; color:var(--text); min-width:36px; text-align:right; }
+
+    .live-badge {
+      display:inline-flex; align-items:center; gap:0.4rem;
+      font-size:0.72rem; color:var(--accent); font-weight:600;
+      letter-spacing:0.05em;
+    }
+    .live-dot {
+      width:7px; height:7px; border-radius:50%;
+      background:var(--accent); animation:livePulse 1.5s ease-in-out infinite;
+    }
+    @keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.85)} }
+
+    .empty-state { text-align:center; padding:2rem; color:var(--text3); font-size:0.88rem; }
+
+    .trend-up   { color:#78c9a0; }
+    .trend-down { color:#e07878; }
+    .trend-flat { color:#e0b878; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">🧘 Mind<span>Ease</span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/mood">Mood Check</a>
+    <a href="/analytics" class="active">📈 Analytics</a>
+    <a href="/resources">Resources</a>
+    <a href="/community">Community</a>
+    <a href="/about">About</a>
+    <a href="/breathing">🌬️ Breathing</a>
+    <a href="/chat" class="nav-cta">💬 AI Chat</a>
+  </div>
+  <button class="burger-btn" id="burger-btn" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <button class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+    <span class="theme-toggle-knob">🌙</span>
+  </button>
+</nav>
+<div id="mobile-nav" class="mobile-nav">
+  <a href="/">Home</a>
+  <a href="/mood">Mood Check</a>
+  <a href="/analytics" class="active">📈 Analytics</a>
+  <a href="/resources">Resources</a>
+  <a href="/community">Community</a>
+  <a href="/breathing">🌬️ Breathing</a>
+  <a href="/about">About</a>
+  <a href="/chat" class="nav-cta">💬 AI Chat</a>
+</div>
+<div id="nav-overlay" class="nav-overlay" onclick="closeNav()"></div>
+
+<div class="page-wrap">
+  <div class="section" style="max-width:1100px;">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:2rem;">
+      <div>
+        <p class="section-label fade-up">📈 Student Wellness Insights</p>
+        <h1 class="section-title fade-up delay-1" style="margin-bottom:0.4rem;">Analytics Dashboard</h1>
+        <p class="section-sub fade-up delay-2" style="margin-bottom:0;">
+          Anonymous data from mood checks — understanding student stress patterns.
+        </p>
+      </div>
+      <div class="fade-up delay-2" style="display:flex; align-items:center; gap:1rem; padding-top:0.5rem;">
+        <div class="live-badge"><div class="live-dot"></div> Live Data</div>
+        <button onclick="loadAnalytics()" class="btn-secondary" style="font-size:0.8rem; padding:0.4rem 1rem;">🔄 Refresh</button>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="analytics-grid fade-up delay-1" id="stat-cards">
+      <div class="stat-card" style="--card-accent: linear-gradient(90deg,#63b3c1,#8ed2c0);">
+        <div class="s-icon">📊</div>
+        <div class="s-label">Total Mood Checks</div>
+        <div class="s-val" id="stat-total">—</div>
+        <div class="s-sub" id="stat-total-sub">Loading...</div>
+      </div>
+      <div class="stat-card" style="--card-accent: linear-gradient(90deg,#e07878,#f0abfc);">
+        <div class="s-icon">🔥</div>
+        <div class="s-label">High Stress</div>
+        <div class="s-val" id="stat-high">—</div>
+        <div class="s-sub" id="stat-high-sub">Loading...</div>
+      </div>
+      <div class="stat-card" style="--card-accent: linear-gradient(90deg,#78c9a0,#7dd3fc);">
+        <div class="s-icon">😴</div>
+        <div class="s-label">Avg Sleep</div>
+        <div class="s-val" id="stat-sleep">—</div>
+        <div class="s-sub" id="stat-sleep-sub">Loading...</div>
+      </div>
+      <div class="stat-card" style="--card-accent: linear-gradient(90deg,#a78bfa,#63b3c1);">
+        <div class="s-icon">📚</div>
+        <div class="s-label">Avg Study Hours</div>
+        <div class="s-val" id="stat-study">—</div>
+        <div class="s-sub" id="stat-study-sub">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Charts Row 1: Donut + Trend -->
+    <div class="charts-row fade-up delay-2">
+
+      <!-- Stress Distribution Donut -->
+      <div class="chart-card">
+        <div class="chart-title">Breakdown</div>
+        <div class="chart-heading">Stress Level Distribution</div>
+        <div class="chart-wrap" style="max-height:220px; display:flex; justify-content:center;">
+          <canvas id="chart-donut" style="max-height:220px;"></canvas>
+        </div>
+        <div style="display:flex; justify-content:center; gap:1.25rem; margin-top:1rem; flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--text2);">
+            <div style="width:10px;height:10px;border-radius:50%;background:#78c9a0;"></div> Low
+            <strong id="pct-low" style="color:var(--text);">—</strong>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--text2);">
+            <div style="width:10px;height:10px;border-radius:50%;background:#e0b878;"></div> Medium
+            <strong id="pct-med" style="color:var(--text);">—</strong>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.4rem;font-size:0.78rem;color:var(--text2);">
+            <div style="width:10px;height:10px;border-radius:50%;background:#e07878;"></div> High
+            <strong id="pct-high" style="color:var(--text);">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7-day Stress Trend Line -->
+      <div class="chart-card">
+        <div class="chart-title">Last 7 Days</div>
+        <div class="chart-heading">Daily Stress Trend</div>
+        <div class="chart-wrap" style="max-height:240px;">
+          <canvas id="chart-trend" style="max-height:240px;"></canvas>
+        </div>
+        <div class="insight-pill" id="trend-insight">📉 Calculating trend...</div>
+      </div>
+
+    </div>
+
+    <!-- Charts Row 2: Situations + Scores + Hourly -->
+    <div class="charts-row-3 fade-up delay-3">
+
+      <!-- Top Situations -->
+      <div class="chart-card">
+        <div class="chart-title">Most Reported</div>
+        <div class="chart-heading">Stress Triggers</div>
+        <div id="situations-bars"></div>
+      </div>
+
+      <!-- Average Input Scores -->
+      <div class="chart-card">
+        <div class="chart-title">Community Averages</div>
+        <div class="chart-heading">Wellbeing Scores</div>
+        <div id="scores-bars"></div>
+      </div>
+
+      <!-- Checks by Hour -->
+      <div class="chart-card">
+        <div class="chart-title">When Do Students Check?</div>
+        <div class="chart-heading">Activity by Hour</div>
+        <div class="chart-wrap" style="max-height:200px;">
+          <canvas id="chart-hourly" style="max-height:200px;"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom: Community Posts Stats -->
+    <div class="charts-row fade-up" style="margin-bottom:0;">
+      <div class="chart-card">
+        <div class="chart-title">Community Activity</div>
+        <div class="chart-heading">Posts by Category</div>
+        <div class="chart-wrap" style="max-height:200px;">
+          <canvas id="chart-community" style="max-height:200px;"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Key Findings</div>
+        <div class="chart-heading">Insights This Week</div>
+        <div id="insights-list" style="display:flex;flex-direction:column;gap:0.75rem;"></div>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <p style="color:var(--text3);font-size:0.78rem;text-align:center;margin-top:2rem;border:1px solid var(--border);border-radius:12px;padding:0.85rem;">
+      🔒 All data is 100% anonymous. No names, IDs, or personal identifiers are stored. Patterns shown are aggregated community insights.
+    </p>
+
+  </div>
+</div>
+
+<footer><p>MindEase © 2025–26</p></footer>
+<button class="scroll-top-btn" id="scroll-top-btn" aria-label="Scroll to top">↑</button>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/particles.js"></script>
+
+<button class="emergency-fab" onclick="openEmergency()"><div class="fab-dot"></div> Help</button>
+<div class="emergency-modal-bg" id="emergency-modal" onclick="closeEmergency()">
+  <div class="emergency-modal" onclick="event.stopPropagation()">
+    <button onclick="closeEmergency()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;">✕</button>
+    <div style="font-size:2rem;margin-bottom:0.75rem;">🆘</div>
+    <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:0.5rem;color:var(--text);">Need immediate help?</h2>
+    <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1.25rem;line-height:1.6;">You are not alone. Trained counsellors are available — free and confidential.</p>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">iCall</div><div style="font-size:0.78rem;color:var(--text3);">Mon–Sat, 8am–10pm</div></div><a href="tel:9152987821" class="helpline-number">9152987821</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">Vandrevala Foundation</div><div style="font-size:0.78rem;color:var(--text3);">24/7 · Free</div></div><a href="tel:18602662345" class="helpline-number">1860-266-2345</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">NIMHANS</div><div style="font-size:0.78rem;color:var(--text3);">National helpline</div></div><a href="tel:080-46110007" class="helpline-number">080-46110007</a></div>
+    <p style="font-size:0.78rem;color:var(--text3);margin-top:1rem;text-align:center;">Or talk to your college counsellor 💙</p>
+  </div>
+</div>
+
+<script>
+// ── Chart.js global defaults matching MindEase theme ────
+Chart.defaults.color = '#7a8ba8';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+
+let charts = {};
+
+// ── Load analytics from API ──────────────────────────────
+async function loadAnalytics() {
+  try {
+    const res  = await fetch('/api/analytics');
+    const data = await res.json();
+    renderAll(data);
+  } catch(e) {
+    // If server not running, show demo data
+    renderAll(getDemoData());
+  }
+}
+
+// ── Render everything ────────────────────────────────────
+function renderAll(d) {
+  renderStatCards(d);
+  renderDonut(d.distribution);
+  renderTrend(d.trend);
+  renderSituations(d.situations);
+  renderScores(d.avg_scores);
+  renderHourly(d.by_hour);
+  renderCommunity(d.community_categories);
+  renderInsights(d);
+}
+
+// ── Stat Cards ───────────────────────────────────────────
+function renderStatCards(d) {
+  const total = d.total_checks;
+  document.getElementById('stat-total').textContent     = total >= 1000 ? (total/1000).toFixed(1)+'k' : total;
+  document.getElementById('stat-total-sub').textContent = total === 1 ? '1 check recorded' : `${total} anonymous checks`;
+
+  const highPct = total > 0 ? Math.round((d.distribution.high / total) * 100) : 0;
+  document.getElementById('stat-high').textContent     = highPct + '%';
+  document.getElementById('stat-high-sub').textContent = `of students under high stress`;
+
+  document.getElementById('stat-sleep').textContent     = d.avg_scores.sleep.toFixed(1) + 'h';
+  document.getElementById('stat-sleep-sub').textContent = d.avg_scores.sleep < 6 ? '⚠️ Below recommended 7–9h' : '✅ Within healthy range';
+
+  document.getElementById('stat-study').textContent     = d.avg_scores.study.toFixed(1) + 'h';
+  document.getElementById('stat-study-sub').textContent = d.avg_scores.study > 10 ? '⚠️ Possible burnout risk' : 'Per day on average';
+}
+
+// ── Donut Chart ──────────────────────────────────────────
+function renderDonut(dist) {
+  const total = dist.low + dist.medium + dist.high || 1;
+  document.getElementById('pct-low').textContent  = Math.round(dist.low/total*100)  + '%';
+  document.getElementById('pct-med').textContent  = Math.round(dist.medium/total*100)+ '%';
+  document.getElementById('pct-high').textContent = Math.round(dist.high/total*100) + '%';
+
+  if (charts.donut) charts.donut.destroy();
+  charts.donut = new Chart(document.getElementById('chart-donut'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Low', 'Medium', 'High'],
+      datasets: [{
+        data: [dist.low, dist.medium, dist.high],
+        backgroundColor: ['rgba(120,201,160,0.85)', 'rgba(224,184,120,0.85)', 'rgba(224,120,120,0.85)'],
+        borderColor: ['#78c9a0','#e0b878','#e07878'],
+        borderWidth: 2,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      cutout: '65%',
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} checks` }
+      }},
+      animation: { animateRotate: true, duration: 1000 }
+    }
+  });
+}
+
+// ── Trend Line Chart ─────────────────────────────────────
+function renderTrend(trend) {
+  const labels = trend.map(t => t.date);
+  const highs  = trend.map(t => t.high);
+  const lows   = trend.map(t => t.low);
+
+  if (charts.trend) charts.trend.destroy();
+  charts.trend = new Chart(document.getElementById('chart-trend'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'High Stress',
+          data: highs,
+          borderColor: '#e07878',
+          backgroundColor: 'rgba(224,120,120,0.08)',
+          tension: 0.4, fill: true, pointRadius: 4,
+          pointBackgroundColor: '#e07878'
+        },
+        {
+          label: 'Low Stress',
+          data: lows,
+          borderColor: '#78c9a0',
+          backgroundColor: 'rgba(120,201,160,0.06)',
+          tension: 0.4, fill: true, pointRadius: 4,
+          pointBackgroundColor: '#78c9a0'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { boxWidth: 10, padding: 16 } } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' },
+             ticks: { precision:0 } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+
+  // Insight pill
+  const lastHigh  = highs[highs.length-1];
+  const prevHigh  = highs[highs.length-2] || lastHigh;
+  const insight   = document.getElementById('trend-insight');
+  if (lastHigh < prevHigh)      { insight.textContent = '📉 High stress dropping — good sign!'; insight.style.color='#78c9a0'; }
+  else if (lastHigh > prevHigh) { insight.textContent = '📈 High stress rising — take care everyone'; insight.style.color='#e07878'; }
+  else                          { insight.textContent = '➡️ Stress levels stable this week'; insight.style.color='#e0b878'; }
+}
+
+// ── Situations Horizontal Bars ───────────────────────────
+function renderSituations(situations) {
+  const el  = document.getElementById('situations-bars');
+  const max = Math.max(...situations.map(s => s.count), 1);
+  const colors = ['#63b3c1','#a78bfa','#e0b878','#78c9a0','#e07878','#7dd3fc','#f0abfc','#8ed2c0'];
+
+  el.innerHTML = situations.map((s, i) => `
+    <div class="bar-row">
+      <div class="bar-label">${s.label}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:0%;background:${colors[i%colors.length]};"
+             data-w="${Math.round(s.count/max*100)}"></div>
+      </div>
+      <div class="bar-count">${s.count}</div>
+    </div>
+  `).join('');
+
+  setTimeout(() => {
+    el.querySelectorAll('.bar-fill').forEach(b => b.style.width = b.dataset.w + '%');
+  }, 100);
+}
+
+// ── Wellbeing Score Bars ─────────────────────────────────
+function renderScores(avg) {
+  const el = document.getElementById('scores-bars');
+  const scores = [
+    { label:'😊 Mood',     val: avg.mood,    max:10, color:'#63b3c1' },
+    { label:'👥 Social',   val: avg.social,  max:10, color:'#8ed2c0' },
+    { label:'😴 Sleep',    val: avg.sleep,   max:12, color:'#7dd3fc' },
+    { label:'😰 Anxiety',  val: avg.anxiety, max:10, color:'#e07878', invert:true },
+    { label:'📚 Study hrs',val: avg.study,   max:16, color:'#a78bfa' },
+  ];
+
+  el.innerHTML = scores.map(s => {
+    const pct = Math.round((s.val / s.max) * 100);
+    const display = s.label.includes('hrs') ? s.val.toFixed(1)+'h' : s.val.toFixed(1)+'/'+s.max;
+    return `
+      <div class="score-row">
+        <div class="score-label">${s.label}</div>
+        <div class="score-track">
+          <div class="score-fill" style="width:0%;background:${s.color};" data-w="${pct}"></div>
+        </div>
+        <div class="score-val">${display}</div>
+      </div>
+    `;
+  }).join('');
+
+  setTimeout(() => {
+    el.querySelectorAll('.score-fill').forEach(b => b.style.width = b.dataset.w + '%');
+  }, 100);
+}
+
+// ── Hourly Activity Bar Chart ────────────────────────────
+function renderHourly(byHour) {
+  const labels = byHour.map(h => h.hour);
+  const counts = byHour.map(h => h.count);
+
+  if (charts.hourly) charts.hourly.destroy();
+  charts.hourly = new Chart(document.getElementById('chart-hourly'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Checks',
+        data: counts,
+        backgroundColor: counts.map((c, i) => {
+          const max = Math.max(...counts);
+          const alpha = 0.3 + (c/max) * 0.6;
+          return `rgba(99,179,193,${alpha})`;
+        }),
+        borderColor: 'rgba(99,179,193,0.8)',
+        borderWidth: 1, borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero:true, grid:{ color:'rgba(255,255,255,0.04)' }, ticks:{ precision:0 } },
+        x: { grid:{ display:false } }
+      }
+    }
+  });
+}
+
+// ── Community Posts Bar Chart ────────────────────────────
+function renderCommunity(cats) {
+  if (charts.community) charts.community.destroy();
+  charts.community = new Chart(document.getElementById('chart-community'), {
+    type: 'bar',
+    data: {
+      labels: cats.map(c => c.label),
+      datasets: [{
+        data: cats.map(c => c.count),
+        backgroundColor: [
+          'rgba(224,120,120,0.7)', 'rgba(99,179,193,0.7)',
+          'rgba(224,184,120,0.7)', 'rgba(142,210,192,0.7)',
+          'rgba(167,139,250,0.7)', 'rgba(120,201,160,0.7)',
+          'rgba(255,255,255,0.15)'
+        ],
+        borderRadius: 6, borderWidth: 0
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend:{ display:false } },
+      scales: {
+        x: { beginAtZero:true, grid:{ color:'rgba(255,255,255,0.04)' }, ticks:{ precision:0 } },
+        y: { grid:{ display:false } }
+      }
+    }
+  });
+}
+
+// ── Key Insights ─────────────────────────────────────────
+function renderInsights(d) {
+  const el     = document.getElementById('insights-list');
+  const total  = d.total_checks;
+  const highPct= total > 0 ? Math.round(d.distribution.high/total*100) : 0;
+  const topSit = d.situations[0]?.label || 'Exams';
+  const sleep  = d.avg_scores.sleep;
+  const anxiety= d.avg_scores.anxiety;
+
+  const insights = [
+    {
+      icon: highPct > 50 ? '🔴' : highPct > 30 ? '🟡' : '🟢',
+      text: highPct > 50
+        ? `${highPct}% of students are under high stress — community needs support`
+        : highPct > 30
+        ? `${highPct}% high stress detected — moderate concern`
+        : `Only ${highPct}% high stress — community is coping well`
+    },
+    {
+      icon: '📌',
+      text: `"${topSit}" is the most reported stress trigger this period`
+    },
+    {
+      icon: sleep < 6 ? '⚠️' : '✅',
+      text: sleep < 6
+        ? `Average sleep is ${sleep.toFixed(1)}h — well below the 7h minimum`
+        : `Average sleep is ${sleep.toFixed(1)}h — within healthy range`
+    },
+    {
+      icon: anxiety > 7 ? '🚨' : anxiety > 5 ? '⚡' : '😌',
+      text: `Average anxiety level: ${anxiety.toFixed(1)}/10 — ${anxiety > 7 ? 'critically high' : anxiety > 5 ? 'elevated' : 'manageable'}`
+    },
+    {
+      icon: '📊',
+      text: `${total} anonymous mood checks recorded — data grows with each submission`
+    }
+  ];
+
+  el.innerHTML = insights.map(ins => `
+    <div style="display:flex;gap:0.75rem;align-items:flex-start;">
+      <span style="font-size:1rem;flex-shrink:0;margin-top:1px;">${ins.icon}</span>
+      <p style="font-size:0.82rem;color:var(--text2);line-height:1.6;margin:0;">${ins.text}</p>
+    </div>
+  `).join('');
+}
+
+// ── Demo Data (used when server/DB not connected) ────────
+function getDemoData() {
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  return {
+    total_checks: 142,
+    distribution: { low: 38, medium: 61, high: 43 },
+    trend: days.map((d, i) => ({
+      date: d,
+      high:   [8, 12, 7, 15, 11, 6, 9][i],
+      medium: [14, 18, 12, 20, 16, 10, 13][i],
+      low:    [10, 8, 13, 7, 9, 15, 11][i]
+    })),
+    situations: [
+      { label:'📝 Exams',             count: 67 },
+      { label:'💼 Placements',        count: 48 },
+      { label:'📋 Assignments',       count: 39 },
+      { label:'😔 Personal Issues',   count: 28 },
+      { label:'🏆 Hackathon',         count: 22 },
+      { label:'💤 Sleep Debt',        count: 19 },
+      { label:'🧑‍💻 Internship',       count: 14 },
+    ],
+    avg_scores: { mood: 5.4, anxiety: 6.1, social: 4.8, sleep: 5.7, study: 7.3 },
+    by_hour: [
+      {hour:'12am',count:3},{hour:'2am',count:6},{hour:'4am',count:2},
+      {hour:'6am',count:4},{hour:'8am',count:9},{hour:'10am',count:14},
+      {hour:'12pm',count:11},{hour:'2pm',count:16},{hour:'4pm',count:13},
+      {hour:'6pm',count:18},{hour:'8pm',count:22},{hour:'10pm',count:24}
+    ],
+    community_categories: [
+      { label:'😰 Exam Stress',   count: 34 },
+      { label:'💼 Placement',     count: 27 },
+      { label:'😤 Overwhelmed',   count: 21 },
+      { label:'🎉 Small Wins',    count: 18 },
+      { label:'🔥 Motivation',    count: 14 },
+      { label:'😴 Sleep Issues',  count: 11 },
+      { label:'💭 General',       count: 8  },
+    ]
+  };
+}
+
+// ── Init ─────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', loadAnalytics);
+</script>
+</body>
+</html>

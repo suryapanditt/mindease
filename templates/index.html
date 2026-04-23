@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindEase — AI Mental Wellness for Students</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+
+<nav>
+  <a href="/" class="nav-logo">🧘 Mind<span>Ease</span></a>
+  <div class="nav-links">
+    <a href="/" class="active">Home</a>
+    <a href="/mood">Mood Check</a>
+    <a href="/resources">Resources</a>
+    <a href="/community">Community</a>
+    <a href="/about">About</a>
+    <a href="/breathing">🌬️ Breathing</a>
+    <a href="/chat" class="nav-cta">💬 AI Chat</a>
+  </div>
+  <button class="burger-btn" id="burger-btn" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <button class="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark mode">
+    <span class="theme-toggle-knob">🌙</span>
+  </button>
+</nav>
+<div id="mobile-nav" class="mobile-nav">
+  <a href="/" class="active">Home</a>
+  <a href="/mood" >Mood Check</a>
+  <a href="/resources" >Resources</a>
+  <a href="/community" >Community</a>
+  <a href="/breathing" >🌬️ Breathing</a>
+  <a href="/about" >About</a>
+  <a href="/chat" class="nav-cta">💬 AI Chat</a>
+</div>
+<div id="nav-overlay" class="nav-overlay" onclick="closeNav()"></div>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <section class="hero">
+    
+
+    <h1>
+      Your mental peace<br/>
+      <span class="highlight">matters more</span> than your grades.
+    </h1>
+
+    <p>
+      MindEase is an AI-powered companion built for students who feel overwhelmed,
+      anxious, or just need someone to talk to — anonymously, anytime.
+    </p>
+
+    <div class="hero-btns">
+      <a href="/mood" class="btn-primary">📊 Check My Mood</a>
+      <a href="/chat" class="btn-secondary">💬 AI Chat</a>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <p class="section-label fade-up">What we offer</p>
+    <h2 class="section-title fade-up delay-1">Everything you need,<br/>in one safe space.</h2>
+    <p class="section-sub fade-up delay-2">No judgment. No pressure. Just support when you need it most.</p>
+
+    <div class="features-grid">
+
+      <div class="feature-card fade-up delay-1">
+        <div class="feature-icon">💬</div>
+        <h3>Anonymous AI Chat</h3>
+        <p>Talk about anything — exams, placements, relationships, or just your day. Our AI listens without judgment.</p>
+      </div>
+
+      <div class="feature-card fade-up delay-2">
+        <div class="feature-icon">📊</div>
+        <h3>Mood Assessment</h3>
+        <p>Fill a quick form about your sleep, study hours, and mood. Get an instant stress level prediction with tips.</p>
+      </div>
+
+      <div class="feature-card fade-up delay-3">
+        <div class="feature-icon">🤖</div>
+        <h3>ML Stress Detection</h3>
+        <p>Our machine learning model (Random Forest) analyzes your inputs and detects early signs of stress.</p>
+      </div>
+
+      <div class="feature-card fade-up delay-1">
+        <div class="feature-icon">📚</div>
+        <h3>Self-Help Resources</h3>
+        <p>Curated articles, breathing exercises, and coping strategies specifically designed for college students.</p>
+      </div>
+
+      <div class="feature-card fade-up delay-2">
+        <div class="feature-icon">🔒</div>
+        <h3>100% Private</h3>
+        <p>No names, no student IDs, no login required. Your conversations stay completely anonymous.</p>
+      </div>
+
+      <div class="feature-card fade-up delay-3">
+        <div class="feature-icon">📱</div>
+        <h3>Works Everywhere</h3>
+        <p>Mobile, tablet, laptop — MindEase works on any device, anytime, even during late-night study sessions.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="section" style="padding-top: 0;">
+    <div class="card">
+      <div class="stats-row">
+        <div class="stat-item">
+          <div class="stat-num">73%</div>
+          <div class="stat-label">Students report academic stress regularly</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">60%</div>
+          <div class="stat-label">Don't seek help due to stigma</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">24/7</div>
+          <div class="stat-label">MindEase is available anytime</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="section" style="padding-top: 0;">
+    <div class="card" style="text-align: center; background: linear-gradient(135deg, rgba(99,179,193,0.1), rgba(142,210,192,0.05)); border-color: rgba(99,179,193,0.25);">
+      <h2 class="section-title" style="margin-bottom: 1rem;">You don't have to handle it alone.</h2>
+      <p style="color: var(--text2); margin-bottom: 2rem; max-width: 480px; margin-left: auto; margin-right: auto;">
+        Thousands of students feel exactly what you're feeling right now. Let's talk about it.
+      </p>
+      <a href="/mood" class="btn-primary" style="margin: 0 auto; display: inline-flex;">📊 Check My Mood →</a>
+    </div>
+  </section>
+
+  <!-- DISCLAIMER -->
+  <section class="section" style="padding-top: 0; padding-bottom: 2rem;">
+    <p style="color: var(--text3); font-size: 0.82rem; text-align: center; border: 1px solid var(--border); border-radius: 12px; padding: 1rem;">
+      ⚠️ MindEase is not a substitute for professional medical or psychological help.
+      If you are in crisis, please contact a mental health professional immediately.
+    </p>
+  </section>
+
+</div>
+
+<footer>
+  <p>MindEase © 2025–26</p>
+</footer>
+
+<button class="scroll-top-btn" id="scroll-top-btn" aria-label="Scroll to top">↑</button>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/particles.js"></script>
+
+<!-- Emergency Helpline -->
+<button class="emergency-fab" onclick="openEmergency()">
+  <div class="fab-dot"></div> Help
+</button>
+<div class="emergency-modal-bg" id="emergency-modal" onclick="closeEmergency()">
+  <div class="emergency-modal" onclick="event.stopPropagation()">
+    <button onclick="closeEmergency()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--text3);font-size:1.2rem;cursor:pointer;">✕</button>
+    <div style="font-size:2rem;margin-bottom:0.75rem;">🆘</div>
+    <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:0.5rem;color:var(--text);">Need immediate help?</h2>
+    <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1.25rem;line-height:1.6;">You are not alone. Trained counsellors are available — free and confidential.</p>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">iCall</div><div style="font-size:0.78rem;color:var(--text3);">Mon–Sat, 8am–10pm</div></div><a href="tel:9152987821" class="helpline-number">9152987821</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">Vandrevala Foundation</div><div style="font-size:0.78rem;color:var(--text3);">24/7 · Free</div></div><a href="tel:18602662345" class="helpline-number">1860-266-2345</a></div>
+    <div class="helpline-item"><div><div style="font-weight:600;color:var(--text);font-size:0.9rem;">NIMHANS</div><div style="font-size:0.78rem;color:var(--text3);">National helpline</div></div><a href="tel:080-46110007" class="helpline-number">080-46110007</a></div>
+    <p style="font-size:0.78rem;color:var(--text3);margin-top:1rem;text-align:center;">Or talk to your college counsellor — asking for help is strength 💙</p>
+  </div>
+</div>
+</body>
+</html>
