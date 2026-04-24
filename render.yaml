@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: mindease
+    runtime: python
+    pythonVersion: "3.11.9"
+    buildCommand: "pip install -r requirements.txt && python ml/generate_data.py && python ml/train_model.py"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "0"
