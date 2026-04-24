@@ -1,38 +1,65 @@
 from flask import Blueprint, jsonify
 from datetime import datetime, timedelta
 from collections import Counter
-import random
 
 analytics_bp = Blueprint('analytics', __name__)
 
-# ── This will be imported from routes/predict.py after MongoDB setup ──
-# For now it reads from the in-memory mood_logs list
-# When MongoDB is connected, replace with DB queries
+# In-memory fallback
+mood_logs = []
 
-mood_logs = []   # Will be replaced with MongoDB collection
+COMMUNITY_LABELS = {
+    'stress':      '😰 Exam Stress',
+    'placement':   '💼 Placement',
+    'overwhelmed': '😤 Overwhelmed',
+    'win':         '🎉 Small Wins',
+    'motivation':  '🔥 Motivation',
+    'sleep':       '😴 Sleep Issues',
+    'general':     '💭 General'
+}
 
+
+def _get_col():
+    from db import get_db
+    db = get_db()
+    return db['mood_logs'] if db is not None else None
+
+
+def _get_logs():
+    col = _get_col()
+    if col is not None:
+        return list(col.find({}, {'_id': 0}).sort('timestamp', -1).limit(500))
+    return mood_logs
+
+
+def log_mood(entry: dict):
+    """Called by predict.py to save a mood check-in."""
+    col = _get_col()
+    if col is not None:
+        try:
+            col.insert_one(entry)
+        except Exception as e:
+            print(f"⚠️  Failed to log mood: {e}")
+    else:
+        mood_logs.append(entry)
+
+
+# ── Helpers ──────────────────────────────────────────────────────────────
 
 def get_distribution(logs):
     c = Counter(l['stress_level'] for l in logs)
-    return { "low": c.get('low',0), "medium": c.get('medium',0), "high": c.get('high',0) }
+    return {"low": c.get('low', 0), "medium": c.get('medium', 0), "high": c.get('high', 0)}
 
 
 def get_trend(logs, days=7):
     result = []
-    for i in range(days-1, -1, -1):
-        day   = datetime.utcnow() - timedelta(days=i)
-        label = day.strftime('%a')
-        day_logs = [
-            l for l in logs
-            if l.get('timestamp','').startswith(day.strftime('%Y-%m-%d'))
-        ]
-        c = Counter(l['stress_level'] for l in day_logs)
-        result.append({
-            "date":   label,
-            "high":   c.get('high', 0),
-            "medium": c.get('medium', 0),
-            "low":    c.get('low', 0)
-        })
+    for i in range(days - 1, -1, -1):
+        day     = datetime.utcnow() - timedelta(days=i)
+        label   = day.strftime('%a')
+        day_str = day.strftime('%Y-%m-%d')
+        d_logs  = [l for l in logs if l.get('timestamp', '').startswith(day_str)]
+        c = Counter(l['stress_level'] for l in d_logs)
+        result.append({"date": label, "high": c.get('high', 0),
+                        "medium": c.get('medium', 0), "low": c.get('low', 0)})
     return result
 
 
@@ -41,7 +68,7 @@ def get_situations(logs):
     for l in logs:
         all_tags.extend(l.get('situation_tags', []))
     c = Counter(all_tags)
-    return [{"label": tag, "count": count} for tag, count in c.most_common(7)]
+    return [{"label": tag, "count": cnt} for tag, cnt in c.most_common(7)]
 
 
 def get_avg_scores(logs):
@@ -58,44 +85,37 @@ def get_avg_scores(logs):
 
 
 def get_by_hour(logs):
-    hour_labels = ['12am','2am','4am','6am','8am','10am','12pm','2pm','4pm','6pm','8pm','10pm']
-    hour_bins   = [0]*12
+    labels = ['12am','2am','4am','6am','8am','10am','12pm','2pm','4pm','6pm','8pm','10pm']
+    bins   = [0] * 12
     for l in logs:
         ts = l.get('timestamp', '')
         try:
             hour = int(ts[11:13]) if len(ts) > 13 else 0
-            hour_bins[hour // 2] += 1
+            bins[hour // 2] += 1
         except Exception:
             pass
-    return [{"hour": hour_labels[i], "count": hour_bins[i]} for i in range(12)]
+    return [{"hour": labels[i], "count": bins[i]} for i in range(12)]
 
 
-COMMUNITY_LABELS = {
-    'stress':      '😰 Exam Stress',
-    'placement':   '💼 Placement',
-    'overwhelmed': '😤 Overwhelmed',
-    'win':         '🎉 Small Wins',
-    'motivation':  '🔥 Motivation',
-    'sleep':       '😴 Sleep Issues',
-    'general':     '💭 General'
-}
-
+# ── Route ────────────────────────────────────────────────────────────────
 
 @analytics_bp.route('/api/analytics')
 def analytics():
     try:
-        # Import community posts from community route
-        from routes.community import posts as community_posts
-
-        logs = mood_logs
+        from routes.community import get_all_posts_for_analytics
+        logs = _get_logs()
 
         community_cats = []
-        if community_posts:
-            c = Counter(p['category'] for p in community_posts)
-            community_cats = [
-                {"label": COMMUNITY_LABELS.get(cat, cat), "count": cnt}
-                for cat, cnt in c.most_common()
-            ]
+        try:
+            community_posts = get_all_posts_for_analytics()
+            if community_posts:
+                c = Counter(p['category'] for p in community_posts)
+                community_cats = [
+                    {"label": COMMUNITY_LABELS.get(cat, cat), "count": cnt}
+                    for cat, cnt in c.most_common()
+                ]
+        except Exception:
+            pass
 
         return jsonify({
             "total_checks":         len(logs),

@@ -3,29 +3,33 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from dotenv import load_dotenv
-from routes.predict import predict_bp
-from routes.chat import chat_bp
+from routes.predict   import predict_bp
+from routes.chat      import chat_bp
 from routes.community import community_bp
 from routes.analytics import analytics_bp
 import os
 
 load_dotenv()
 
-# Fix #11: warn on startup if expected env vars are missing
+
 def check_env():
     warnings = []
-    # Add any required env vars here as the project grows
-    # e.g. if not os.getenv('MONGO_URI'): warnings.append('MONGO_URI')
+    if not os.getenv('MONGO_URI'):
+        warnings.append('MONGO_URI  → data will NOT persist across restarts')
+    if not os.getenv('GROQ_API_KEY'):
+        warnings.append('GROQ_API_KEY  → AI chat will be disabled')
     if warnings:
-        print(f"⚠️  Missing env vars: {', '.join(warnings)}")
-        print("   Add them to your .env file.\n")
+        print("\n⚠️  Missing environment variables:")
+        for w in warnings:
+            print(f"   • {w}")
+        print("   Add them to .env or Render dashboard.\n")
+
 
 check_env()
 
 app = Flask(__name__)
 CORS(app)
 
-# Fix #13: basic rate limiting to prevent abuse
 limiter = Limiter(
     get_remote_address,
     app=app,
@@ -33,17 +37,17 @@ limiter = Limiter(
     storage_uri="memory://"
 )
 
-# Apply stricter limits on sensitive POST routes
 limiter.limit("30 per hour")(predict_bp)
 limiter.limit("20 per hour")(community_bp)
+limiter.limit("30 per hour")(chat_bp)
 
-# Register API routes
 app.register_blueprint(predict_bp)
 app.register_blueprint(chat_bp)
 app.register_blueprint(community_bp)
 app.register_blueprint(analytics_bp)
 
-# ── Serve HTML Pages ──────────────────────────────────
+
+# ── HTML Pages ──────────────────────────────────────────────────────────
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -76,26 +80,21 @@ def analytics():
 def chat():
     return render_template('chat.html')
 
-# ── API Status ────────────────────────────────────────
+
+# ── API Status ──────────────────────────────────────────────────────────
 @app.route('/api/status')
 def status():
+    from db import is_connected
     return jsonify({
-        "status": "running",
-        "project": "MindEase",
-        "version": "1.0",
-        "routes": {
-            "GET  /":                  "Home page",
-            "GET  /mood":              "Mood check page",
-            "GET  /resources":         "Resources page",
-            "GET  /community":         "Community page",
-            "GET  /about":             "About page",
-            "POST /predict":           "ML stress prediction",
-            "GET  /community/posts":   "Get community posts",
-            "POST /community/post":    "Create anonymous post",
-        }
+        "status":   "running",
+        "project":  "MindEase",
+        "version":  "1.0",
+        "database": "mongodb" if is_connected() else "in-memory",
+        "chat":     "enabled" if os.getenv('GROQ_API_KEY') else "disabled",
     })
 
-# Fix #9: Global error handlers
+
+# ── Error Handlers ──────────────────────────────────────────────────────
 @app.errorhandler(404)
 def not_found(e):
     return jsonify({"error": "Route not found"}), 404
@@ -107,6 +106,7 @@ def server_error(e):
 @app.errorhandler(429)
 def rate_limit_exceeded(e):
     return jsonify({"error": "Too many requests. Please wait a moment."}), 429
+
 
 if __name__ == '__main__':
     print("\n🧘 MindEase is running!")

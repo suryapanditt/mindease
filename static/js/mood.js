@@ -26,7 +26,7 @@ function updateSlider(id, labelId, suffix) {
 function toggleTag(el) { el.classList.toggle('active'); }
 
 function animateNeedle(level) {
-  const meter = document.getElementById('stress-meter');
+  const meter  = document.getElementById('stress-meter');
   const needle = document.getElementById('stress-needle');
   if (!meter || !needle) return;
   meter.style.display = 'block';
@@ -40,11 +40,10 @@ function animateNeedle(level) {
 function setLoading(on) {
   const btn = document.getElementById('predict-btn');
   btn.textContent = on ? '⏳ Analyzing...' : '🔍 Predict My Stress Level';
-  btn.disabled = on;
+  btn.disabled    = on;
   btn.style.opacity = on ? '0.7' : '1';
 }
 
-// ── Store last inputs for detailed card ──────────────
 let lastInputs = {};
 
 document.getElementById('mood-form').addEventListener('submit', async function(e) {
@@ -53,41 +52,33 @@ document.getElementById('mood-form').addEventListener('submit', async function(e
   const errBox = document.getElementById('predict-error');
   if (errBox) errBox.style.display = 'none';
 
-  const sleep   = parseFloat(document.getElementById('sleep').value);
-  const study   = parseFloat(document.getElementById('study').value);
-  const mood    = parseInt(document.getElementById('study').value);
-  const anxiety = parseInt(document.getElementById('anxiety').value);
-  const social  = parseInt(document.getElementById('social').value);
-
-  // Collect selected situation tags
-  const selectedTags = [...document.querySelectorAll('#situation-tags .tag.active')]
-    .map(t => t.textContent.trim());
-
-  // Save inputs for detailed card
+  // ✅ BUG FIXED: was reading 'study' element for mood — now correctly reads 'mood'
   lastInputs = {
     sleep:   parseFloat(document.getElementById('sleep').value),
     study:   parseFloat(document.getElementById('study').value),
-    mood:    parseInt(document.getElementById('mood').value),
+    mood:    parseInt(document.getElementById('mood').value),    // ✅ FIXED
     anxiety: parseInt(document.getElementById('anxiety').value),
     social:  parseInt(document.getElementById('social').value),
-    tags:    selectedTags
+    tags:    [...document.querySelectorAll('#situation-tags .tag.active')]
+               .map(t => t.textContent.trim())
   };
 
   const payload = {
-    sleep_hours:   lastInputs.sleep,
-    study_hours:   lastInputs.study,
-    mood_rating:   lastInputs.mood,
-    anxiety_level: lastInputs.anxiety,
-    social_score:  lastInputs.social
+    sleep_hours:    lastInputs.sleep,
+    study_hours:    lastInputs.study,
+    mood_rating:    lastInputs.mood,
+    anxiety_level:  lastInputs.anxiety,
+    social_score:   lastInputs.social,
+    situation_tags: lastInputs.tags
   };
 
   setLoading(true);
 
   try {
     const res = await fetch('/predict', {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body:    JSON.stringify(payload)
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
@@ -98,13 +89,14 @@ document.getElementById('mood-form').addEventListener('submit', async function(e
       errBox.textContent = '⚠️ Server se connect nahi ho pa raha. Please refresh karein.';
       errBox.style.display = 'block';
     }
+    console.error('Predict error:', err);
   }
 
   setLoading(false);
 });
 
 /* ── Share Card ─────────────────────────────────────── */
-let lastResult = { level: '', emoji: '', tip: '' };
+let lastResult = { level: '', tip: '' };
 let activeTab  = 'simple';
 
 const LEVEL_COLORS = {
@@ -116,40 +108,53 @@ const LEVEL_COLORS = {
 function showResult(level, score, tip) {
   animateNeedle(level);
   lastResult = { level, tip };
-  ['low','medium','high'].forEach(l => document.getElementById('result-'+l).style.display = 'none');
-  document.getElementById('result-'+level).style.display = 'block';
-  document.getElementById('tips-'+level).textContent = tip;
+
+  ['low', 'medium', 'high'].forEach(l => {
+    const el = document.getElementById('result-' + l);
+    if (el) el.style.display = 'none';
+  });
+
+  const resultEl = document.getElementById('result-' + level);
+  if (resultEl) resultEl.style.display = 'block';
+
+  const tipsEl = document.getElementById('tips-' + level);
+  if (tipsEl) tipsEl.textContent = tip;
+
   const badge = document.getElementById('model-badge');
-  if (badge) { badge.textContent = '🤖 Predicted by Random Forest ML Model (90.5% accuracy)'; badge.style.display = 'block'; }
-  document.getElementById('chat-cta').style.display = 'block';
+  if (badge) {
+    badge.textContent   = '🤖 Predicted by Random Forest ML Model (90.5% accuracy)';
+    badge.style.display = 'block';
+  }
+
+  const chatCta = document.getElementById('chat-cta');
+  if (chatCta) chatCta.style.display = 'block';
+
   const wrap = document.getElementById('share-result-wrap');
   if (wrap) wrap.style.display = 'block';
-  document.getElementById('result-'+level).scrollIntoView({ behavior:'smooth', block:'center' });
+
+  if (resultEl) resultEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function openShareCard() {
   const { level, tip } = lastResult;
   if (!level) return;
 
-  const col   = LEVEL_COLORS[level];
+  const col    = LEVEL_COLORS[level];
   const emojis = { low: '🌿', medium: '⚡', high: '🔥' };
-  const dateStr = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+  const dateStr = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
 
-  // ── Populate Simple Card ──
-  document.getElementById('sc-emoji').textContent  = emojis[level];
-  document.getElementById('sc-level').textContent  = col.label;
-  document.getElementById('sc-level').style.color  = col.text;
-  document.getElementById('sc-tip').textContent    = tip;
-  document.getElementById('sc-date').textContent   = dateStr;
+  document.getElementById('sc-emoji').textContent = emojis[level];
+  document.getElementById('sc-level').textContent = col.label;
+  document.getElementById('sc-level').style.color = col.text;
+  document.getElementById('sc-tip').textContent   = tip;
+  document.getElementById('sc-date').textContent  = dateStr;
 
-  // ── Populate Detailed Card ──
-  document.getElementById('sd-emoji').textContent  = emojis[level];
-  document.getElementById('sd-level').textContent  = col.label;
-  document.getElementById('sd-level').style.color  = col.text;
-  document.getElementById('sd-tip').textContent    = tip;
-  document.getElementById('sd-date').textContent   = dateStr;
+  document.getElementById('sd-emoji').textContent = emojis[level];
+  document.getElementById('sd-level').textContent = col.label;
+  document.getElementById('sd-level').style.color = col.text;
+  document.getElementById('sd-tip').textContent   = tip;
+  document.getElementById('sd-date').textContent  = dateStr;
 
-  // Input rows
   const inputRows = [
     { label: '😴 Sleep',   value: lastInputs.sleep   + ' hrs' },
     { label: '📚 Study',   value: lastInputs.study   + ' hrs' },
@@ -165,7 +170,6 @@ function openShareCard() {
     </div>
   `).join('');
 
-  // Situation tags
   const tagsEl = document.getElementById('sd-tags');
   if (lastInputs.tags && lastInputs.tags.length > 0) {
     tagsEl.innerHTML = lastInputs.tags.map(t => `
@@ -175,7 +179,6 @@ function openShareCard() {
     tagsEl.innerHTML = '';
   }
 
-  // Reset to simple tab
   switchTab('simple');
   document.getElementById('share-modal').classList.add('open');
 }
@@ -184,37 +187,34 @@ function closeShareCard() {
   document.getElementById('share-modal').classList.remove('open');
 }
 
-// ── Tab switcher ─────────────────────────────────────
 function switchTab(tab) {
   activeTab = tab;
-
-  const simpleCard   = document.getElementById('share-card');
-  const detailCard   = document.getElementById('share-card-detailed');
-  const btnSimple    = document.getElementById('tab-simple');
-  const btnDetailed  = document.getElementById('tab-detailed');
+  const simpleCard  = document.getElementById('share-card');
+  const detailCard  = document.getElementById('share-card-detailed');
+  const btnSimple   = document.getElementById('tab-simple');
+  const btnDetailed = document.getElementById('tab-detailed');
 
   if (tab === 'simple') {
-    simpleCard.style.display  = 'block';
-    detailCard.style.display  = 'none';
-    btnSimple.style.background  = 'var(--accent)';
-    btnSimple.style.color       = '#fff';
-    btnSimple.style.fontWeight  = '600';
+    simpleCard.style.display     = 'block';
+    detailCard.style.display     = 'none';
+    btnSimple.style.background   = 'var(--accent)';
+    btnSimple.style.color        = '#fff';
+    btnSimple.style.fontWeight   = '600';
     btnDetailed.style.background = 'transparent';
     btnDetailed.style.color      = 'var(--text2)';
     btnDetailed.style.fontWeight = '400';
   } else {
-    simpleCard.style.display  = 'none';
-    detailCard.style.display  = 'block';
+    simpleCard.style.display     = 'none';
+    detailCard.style.display     = 'block';
     btnDetailed.style.background = 'var(--accent)';
     btnDetailed.style.color      = '#fff';
     btnDetailed.style.fontWeight = '600';
-    btnSimple.style.background  = 'transparent';
-    btnSimple.style.color       = 'var(--text2)';
-    btnSimple.style.fontWeight  = '400';
+    btnSimple.style.background   = 'transparent';
+    btnSimple.style.color        = 'var(--text2)';
+    btnSimple.style.fontWeight   = '400';
   }
 }
 
-// ── Download whichever tab is active ─────────────────
 async function downloadShareCard() {
   const cardId = activeTab === 'simple' ? 'share-card' : 'share-card-detailed';
   const card   = document.getElementById(cardId);
@@ -223,34 +223,24 @@ async function downloadShareCard() {
   btn.textContent = '⏳ Generating...';
   btn.disabled    = true;
 
-  // Temporarily make detailed card visible if it's hidden (for capture)
   const wasHidden = card.style.display === 'none';
   if (wasHidden) card.style.display = 'block';
 
   try {
-    // Load html2canvas if not already loaded
     if (!window.html2canvas) {
       await new Promise((res, rej) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        const s  = document.createElement('script');
+        s.src    = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
         s.onload = res; s.onerror = rej;
         document.head.appendChild(s);
       });
     }
-
-    const canvas = await html2canvas(card, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: null,
-      logging: false
-    });
-
-    const link      = document.createElement('a');
-    const suffix    = activeTab === 'simple' ? 'simple' : 'detailed';
-    link.download   = `mindease-mood-${suffix}-${Date.now()}.png`;
-    link.href       = canvas.toDataURL('image/png');
+    const canvas  = await html2canvas(card, { scale: 2, useCORS: true, backgroundColor: null, logging: false });
+    const link    = document.createElement('a');
+    const suffix  = activeTab === 'simple' ? 'simple' : 'detailed';
+    link.download = `mindease-mood-${suffix}-${Date.now()}.png`;
+    link.href     = canvas.toDataURL('image/png');
     link.click();
-
   } catch(e) {
     alert('Download failed. Try right-click → Save image on the card.');
   }

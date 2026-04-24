@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from datetime import datetime
 import random
 import os
 import pickle
@@ -6,7 +7,6 @@ import numpy as np
 
 predict_bp = Blueprint('predict', __name__)
 
-# Fix #10: robust path resolution regardless of working directory
 BASE        = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 MODEL_PATH  = os.path.join(BASE, 'ml', 'model.pkl')
 SCALER_PATH = os.path.join(BASE, 'ml', 'scaler.pkl')
@@ -32,6 +32,7 @@ TIPS = {
     ]
 }
 
+
 def rule_based_predict(sleep, study, mood, anxiety, social):
     score = 0
     if sleep < 4:    score += 30
@@ -49,22 +50,18 @@ def rule_based_predict(sleep, study, mood, anxiety, social):
     elif score < 65: return score, "medium"
     else:            return score, "high"
 
+
 def ml_predict(sleep, study, mood, anxiety, social):
     with open(MODEL_PATH, 'rb') as f:
         model = pickle.load(f)
     with open(SCALER_PATH, 'rb') as f:
         scaler = pickle.load(f)
-
-    features = np.array([[sleep, study, mood, anxiety, social]])
-
-    # Fix #2: scaler.transform() was missing — added now
+    features        = np.array([[sleep, study, mood, anxiety, social]])
     scaled_features = scaler.transform(features)
-
-    prediction = model.predict(scaled_features)[0]
-    proba      = model.predict_proba(scaled_features)[0]
-    confidence = int(max(proba) * 100)
-
-    label_map = {0: "low", 1: "medium", 2: "high"}
+    prediction      = model.predict(scaled_features)[0]
+    proba           = model.predict_proba(scaled_features)[0]
+    confidence      = int(max(proba) * 100)
+    label_map       = {0: "low", 1: "medium", 2: "high"}
     return confidence, label_map.get(int(prediction), "medium")
 
 
@@ -88,35 +85,35 @@ def predict():
 
         if os.path.exists(MODEL_PATH) and os.path.exists(SCALER_PATH):
             score, level = ml_predict(sleep, study, mood, anxiety, social)
-            model_used = "random_forest"
+            model_used   = "random_forest"
         else:
             score, level = rule_based_predict(sleep, study, mood, anxiety, social)
-            model_used = "rule_based"
+            model_used   = "rule_based"
 
         tip = random.choice(TIPS[level])
 
-        # Log anonymously for analytics (no personal data)
+        # ✅ Log to MongoDB via analytics.log_mood()
         try:
-            from routes.analytics import mood_logs
-            mood_logs.append({
-                "sleep_hours":   sleep,
-                "study_hours":   study,
-                "mood_rating":   mood,
-                "anxiety_level": anxiety,
-                "social_score":  social,
-                "stress_level":  level,
-                "stress_score":  score,
+            from routes.analytics import log_mood
+            log_mood({
+                "sleep_hours":    sleep,
+                "study_hours":    study,
+                "mood_rating":    mood,
+                "anxiety_level":  anxiety,
+                "social_score":   social,
+                "stress_level":   level,
+                "stress_score":   score,
                 "situation_tags": data.get('situation_tags', []),
-                "timestamp":     __import__('datetime').datetime.utcnow().isoformat()
+                "timestamp":      datetime.utcnow().isoformat()
             })
         except Exception:
-            pass   # Analytics failure should never break prediction
+            pass
 
         return jsonify({
             "stress_score": score,
             "stress_level": level,
-            "tip": tip,
-            "model_used": model_used
+            "tip":          tip,
+            "model_used":   model_used
         })
 
     except ValueError as e:
